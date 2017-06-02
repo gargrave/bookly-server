@@ -12,12 +12,6 @@ module.exports = {
     debugPort: 5858
   },
 
-  database: {
-    connection: {
-      database: 'my-database-name'
-    }
-  },
-
   logging: {
     console: {
       prettyPrint: true,
