@@ -1,0 +1,30 @@
+{
+  "name": "bookly-server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "blipp": "^2.3.0",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "hapi": "^16.3.0"
+  },
+  "devDependencies": {
+    "boom": "^5.1.0",
+    "joi": "^10.5.2",
+    "lodash": "^4.17.4",
+    "nodemon": "^1.11.0",
+    "wreck": "^12.2.2"
+  }
+}
