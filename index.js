@@ -5,14 +5,9 @@ const Blipp = require('blipp')
 
 const server = new Hapi.Server()
 
-server.connection({
-  port: process.env.port || 3001,
-  routes: {
-    cors: {
-      origin: ['*']
-    }
-  }
-})
+const config = require('./config')
+
+server.connection(config.server)
 
 server.register({ register: Blipp, options: {} }, (err) => {
   if (err) {
