@@ -18,6 +18,7 @@ server.register({ register: Blipp, options: {} }, (err) => {
 server.route(require('./api/authors/routes/listAuthors'))
 server.route(require('./api/authors/routes/detailAuthor'))
 server.route(require('./api/authors/routes/createAuthor'))
+server.route(require('./api/authors/routes/updateAuthor'))
 
 server.start(err => {
   if (err) {
