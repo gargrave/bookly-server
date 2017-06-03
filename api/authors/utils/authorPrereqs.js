@@ -1,17 +1,19 @@
+'use strict'
+
 const Boom = require('boom')
 
-const mock = require('../../../database/mocks/authorMock')
+const knex = require('../../../database/db')
 
 module.exports = {
   ensureUnique (request, reply) {
     const { firstName, lastName } = request.payload
-    const data = mock.get()
 
-    data.forEach(a => {
-      if (a.firstName === firstName && a.lastName === lastName) {
-        return reply(Boom.badRequest('A matching Author already exists.'))
-      }
-    })
-    return reply()
+    knex('Author').where({ firstName, lastName })
+      .then(author => {
+        if (author.length) {
+          return reply(Boom.badRequest('A matching Author already exists.'))
+        }
+        return reply()
+      })
   }
 }

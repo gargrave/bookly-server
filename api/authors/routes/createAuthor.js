@@ -1,6 +1,8 @@
 'use strict'
 
-const mock = require('../../../database/mocks/authorMock')
+const Boom = require('boom')
+
+const knex = require('../../../database/db')
 const prereqs = require('../utils/authorPrereqs')
 const validator = require('../utils/authorValidator')
 
@@ -8,14 +10,26 @@ module.exports = {
   method: 'POST',
   path: '/api/v1/authors',
   config: {
+
     pre: [
-      prereqs.ensureUnique
+      {
+        method: prereqs.ensureUnique,
+        failAction: 'error'
+      }
     ],
+
     handler: (request, reply) => {
       const data = request.payload
-      const author = mock.create(data)
-      reply(author)
+
+      knex('Author').insert(data).returning('*')
+        .then(author => {
+          reply(author)
+        }, err => {
+          console.log(err)
+          reply(Boom.badRequest('Author creation failed.'))
+        })
     },
+
     validate: {
       payload: validator.create
     }

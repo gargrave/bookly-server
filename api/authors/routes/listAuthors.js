@@ -1,14 +1,16 @@
 'use strict'
 
-let mock = require('../../../database/mocks/authorMock')
-let knex = require('../../../database/db')
+const knex = require('../../../database/db')
 
 module.exports = {
   method: 'GET',
   path: '/api/v1/authors',
   config: {
     handler: (request, reply) => {
-      reply(knex.select().from('author'))
+      knex.select().from('Author')
+        .then(authors => {
+          reply(authors)
+        })
     }
   }
 }
