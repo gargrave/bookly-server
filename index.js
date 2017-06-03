@@ -6,6 +6,7 @@ const Blipp = require('blipp')
 const server = new Hapi.Server()
 
 const config = require('./config')
+const routes = require('./api/routes')
 
 server.connection(config.server)
 
@@ -15,10 +16,8 @@ server.register({ register: Blipp, options: {} }, (err) => {
   }
 })
 
-server.route(require('./api/authors/routes/listAuthors'))
-server.route(require('./api/authors/routes/detailAuthor'))
-server.route(require('./api/authors/routes/createAuthor'))
-server.route(require('./api/authors/routes/updateAuthor'))
+// setup routes
+routes.forEach(r => server.route(require(r)))
 
 server.start(err => {
   if (err) {
