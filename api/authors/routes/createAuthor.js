@@ -10,7 +10,6 @@ module.exports = {
   method: 'POST',
   path: '/api/v1/authors',
   config: {
-
     pre: [
       {
         method: prereqs.ensureUnique,
