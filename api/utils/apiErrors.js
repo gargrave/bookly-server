@@ -9,6 +9,11 @@ module.exports = {
     return `${modelName} update failed.`
   },
 
+  // attempting to create a duplicate entry
+  matchingRecord (modelName) {
+    return `A matching ${modelName} already exists.`
+  },
+
   // no record with matching ID in database
   notFound (modelName, id) {
     return `No ${modelName} with id ${id} could be found.`

@@ -3,7 +3,7 @@
 let data = [
   { firstName: 'Kurt', lastName: 'Vonnegut' },
   { firstName: 'Chuck', lastName: 'Palahniuk' },
-  { firstName: 'Tim', lastName: 'Robbins' },
+  { firstName: 'Tom', lastName: 'Robbins' },
   { firstName: 'Bill', lastName: 'Bryson' },
   { firstName: 'Aldous', lastName: 'Huxley' },
   { firstName: 'J. D.', lastName: 'Salinger' },
