@@ -1,21 +1,9 @@
-let data = [
-  {
-    id: 0,
-    firstName: 'Kurt',
-    lastName: 'Vonnnegut'
-  },
-  {
-    id: 1,
-    firstName: 'Chuck',
-    lastName: 'Palahniuk'
-  },
-  {
-    id: 2,
-    firstName: 'Tim',
-    lastName: 'Robbins'
-  }
-]
+const data = require('../mocks/authorMock').get()
 
-module.exports = {
-  data
+exports.seed = (Knex, Promise) => {
+  return new Promise((resolve, reject) => {
+    return Knex('Author')
+      .insert(data)
+      .then(resolve)
+  })
 }
