@@ -1,17 +1,13 @@
 'use strict'
 
-const knex = require('../../../database/db')
+const APIListRoute = require('../../generic-routes/list')
+
 const DB = require('../../../globals/constants').db
 
-module.exports = {
-  method: 'GET',
-  path: '/api/v1/authors',
-  config: {
-    handler: (request, reply) => {
-      knex.select().from(DB.AUTHORS)
-        .then(authors => {
-          reply(authors)
-        })
-    }
-  }
+const params = {
+  path: 'authors',
+  db: DB.AUTHORS,
+  resourceName: 'Author'
 }
+
+module.exports = new APIListRoute(params)
