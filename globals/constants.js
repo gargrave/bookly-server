@@ -1,3 +1,4 @@
 exports.db = {
-  AUTHORS: 'Authors'
+  AUTHORS: 'Authors',
+  BOOKS: 'Books'
 }
