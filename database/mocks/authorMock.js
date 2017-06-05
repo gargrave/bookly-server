@@ -1,7 +1,7 @@
 'use strict'
 
 let data = [
-  { firstName: 'Kurt', lastName: 'Vonnnegut' },
+  { firstName: 'Kurt', lastName: 'Vonnegut' },
   { firstName: 'Chuck', lastName: 'Palahniuk' },
   { firstName: 'Tim', lastName: 'Robbins' },
   { firstName: 'Bill', lastName: 'Bryson' },
