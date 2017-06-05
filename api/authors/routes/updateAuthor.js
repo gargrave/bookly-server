@@ -3,6 +3,7 @@
 const Boom = require('boom')
 
 const knex = require('../../../database/db')
+const DB = require('../../../globals/constants').db
 const prereqs = require('../utils/authorPrereqs')
 const validator = require('../utils/authorValidator')
 
@@ -20,7 +21,7 @@ module.exports = {
         { updated_at: knex.raw('NOW()') }
       )
 
-      knex('Author')
+      knex(DB.AUTHORS)
         .where('id', request.params.id)
         .update(data).returning('*')
           .then(author => {

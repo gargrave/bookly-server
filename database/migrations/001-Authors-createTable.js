@@ -1,5 +1,7 @@
+const DB = require('../../globals/constants').db
+
 exports.up = function (knex, Promise) {
-  return knex.schema.createTableIfNotExists('Author', (table) => {
+  return knex.schema.createTableIfNotExists(DB.AUTHORS, (table) => {
     table.increments('id')
     table.string('firstName').notNullable()
     table.string('lastName').notNullable()

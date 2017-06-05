@@ -3,6 +3,7 @@
 const Boom = require('boom')
 
 const knex = require('../../../database/db')
+const DB = require('../../../globals/constants').db
 const prereqs = require('../utils/authorPrereqs')
 const validator = require('../utils/authorValidator')
 
@@ -20,7 +21,7 @@ module.exports = {
     handler: (request, reply) => {
       const data = request.payload
 
-      knex('Author').insert(data).returning('*')
+      knex(DB.AUTHORS).insert(data).returning('*')
         .then(author => {
           reply(author)
         }, err => {

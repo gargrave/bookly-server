@@ -1,0 +1,3 @@
+exports.db = {
+  AUTHORS: 'Authors'
+}
