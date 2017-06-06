@@ -3,7 +3,7 @@
 const APICreateRoute = require('../../generic-routes/create')
 
 const DB = require('../../../globals/constants').db
-const prereqs = require('../utils/authorPrereqs')
+const prereqs = require('../../utils/prereqs')
 const validator = require('../utils/authorValidator')
 
 const params = {
@@ -12,10 +12,19 @@ const params = {
   resourceName: 'Author'
 }
 
-module.exports = new APICreateRoute(params)
+function AuthorCreateRoute () {
+  APICreateRoute.call(this, params)
+}
+AuthorCreateRoute.prototype = Object.create(APICreateRoute.prototype)
+
+AuthorCreateRoute.prototype.getQueryCols = function () {
+  return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
+}
+
+module.exports = new AuthorCreateRoute()
   .pre([
-    { method: prereqs.ensureUnique, failAction: 'error' }
+    { method: prereqs.populateOwnerId, failAction: 'error' }
   ])
   .validate({
-    payload: validator.create
+    payload: validator.onCreate
   })

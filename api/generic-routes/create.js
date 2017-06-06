@@ -11,13 +11,11 @@ function APICreateRoute ({ path, db, resourceName, auth }) {
   APIRoute.call(this, 'POST', path, auth)
 
   this.config.handler = (request, reply) => {
-    const cols = this.getQueryCols()
-
     this.buildPayload(request.payload)
       .then(data => {
         knex(db)
           .insert(data)
-          .returning(cols)
+          .returning(this.getQueryCols())
             .then(result => {
               reply(result[0])
             }, err => {
