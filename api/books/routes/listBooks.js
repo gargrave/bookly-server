@@ -10,4 +10,13 @@ const params = {
   resourceName: 'Book'
 }
 
-module.exports = new APIListRoute(params)
+function BooksListRoute () {
+  APIListRoute.call(this, params)
+}
+BooksListRoute.prototype = Object.create(APIListRoute.prototype)
+
+BooksListRoute.prototype.getQueryCols = function () {
+  return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+}
+
+module.exports = new BooksListRoute()
