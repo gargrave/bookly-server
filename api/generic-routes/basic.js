@@ -25,11 +25,25 @@ APIRoute.prototype.validate = function (validate) {
   return this
 }
 
-// optional overridable function to allow a route to customize
-// a payload between the time it is validated and the time it is sent to DB
-// e.g. remove an extra 'password confirm' field from register route
+/*
+Optional overridable function to allow a route to define a specific
+set of columns for a SELECT query.
+Defaults to all cols.
+*/
+APIRoute.prototype.getQueryCols = function () {
+  return '*'
+}
+
+/*
+Optional overridable function to allow a route to customize
+a payload between the time it is validated and the time it is sent to DB.
+
+e.g. remove an extra 'password confirm' field from register route
+
+Note that it must a return a Promise.
+*/
 APIRoute.prototype.buildPayload = function (payload) {
-  return payload
+  return Promise.resolve(payload)
 }
 
 module.exports = APIRoute

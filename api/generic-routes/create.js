@@ -12,21 +12,26 @@ function APICreateRoute ({ path, db, resourceName }) {
 
   this.config = {
     handler: (request, reply) => {
-      const data = this.buildPayload(request.payload)
+      const cols = this.getQueryCols()
 
-      knex(db)
-        .insert(data)
-        .returning('*')
-          .then(result => {
-            reply(result)
-          }, err => {
-            console.log(err)
-            reply(Boom.badRequest(apiErr.failedToCreate(resourceName)))
-          })
+      this.buildPayload(request.payload)
+        .then(data => {
+          knex(db)
+            .insert(data)
+            .returning(cols)
+              .then(result => {
+                reply(result[0])
+              }, err => {
+                console.log(err)
+                reply(Boom.badRequest(apiErr.failedToCreate(resourceName)))
+              })
+        }, err => {
+          console.log(err)
+          reply(Boom.badRequest(apiErr.failedToCreate(resourceName)))
+        })
     }
   }
 }
-
 APICreateRoute.prototype = Object.create(APIRoute.prototype)
 
 module.exports = APICreateRoute
