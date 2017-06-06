@@ -5,6 +5,7 @@ This is nothing more than a convenience to keep our main index.js file a little 
 module.exports = [
   // Auth routes
   './api/auth/routes/register',
+  './api/auth/routes/login',
 
   // Author routes
   './api/authors/routes/createAuthor',

@@ -17,5 +17,10 @@ module.exports = {
   // no record with matching ID in database
   notFound (modelName, id) {
     return `No ${modelName} with id ${id} could be found.`
+  },
+
+  // invalid login attempt
+  invalidLogin () {
+    return 'Could not login with the provided credentials.'
   }
 }
