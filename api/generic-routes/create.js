@@ -12,7 +12,7 @@ function APICreateRoute ({ path, db, resourceName }) {
 
   this.config = {
     handler: (request, reply) => {
-      const data = request.payload
+      const data = this.buildPayload(request.payload)
 
       knex(db)
         .insert(data)
