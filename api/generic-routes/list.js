@@ -17,7 +17,6 @@ function APIListRoute ({ path, db, resourceName }) {
     }
   }
 }
-
 APIListRoute.prototype = Object.create(APIRoute.prototype)
 
 module.exports = APIListRoute

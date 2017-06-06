@@ -21,12 +21,11 @@ function APIDetailRoute ({ path, db, resourceName }) {
           if (!result.length) {
             return reply(Boom.notFound(apiErr.notFound(resourceName, id)))
           }
-          reply(result)
+          reply(result[0])
         })
     }
   }
 }
-
 APIDetailRoute.prototype = Object.create(APIRoute.prototype)
 
 module.exports = APIDetailRoute
