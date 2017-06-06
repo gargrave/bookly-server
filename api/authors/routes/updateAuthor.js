@@ -3,7 +3,6 @@
 const APIUpdateRoute = require('../../generic-routes/update')
 
 const DB = require('../../../globals/constants').db
-const prereqs = require('../utils/authorPrereqs')
 const validator = require('../utils/authorValidator')
 
 const params = {
@@ -12,10 +11,16 @@ const params = {
   resourceName: 'Author'
 }
 
-module.exports = new APIUpdateRoute(params)
-  .pre([
-    { method: prereqs.ensureUnique, failAction: 'error' }
-  ])
+function AuthorUpdateRoute () {
+  APIUpdateRoute.call(this, params)
+}
+AuthorUpdateRoute.prototype = Object.create(APIUpdateRoute.prototype)
+
+AuthorUpdateRoute.prototype.getQueryCols = function () {
+  return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
+}
+
+module.exports = new AuthorUpdateRoute()
   .validate({
-    payload: validator.create
+    payload: validator.onCreate
   })

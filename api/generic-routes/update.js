@@ -11,15 +11,19 @@ function APIUpdateRoute ({ path, db, resourceName }) {
   APIRoute.call(this, ['PUT', 'PATCH'], `${path}/{id}`)
 
   this.config.handler = (request, reply) => {
+    const ownerId = request.auth.credentials.id
+    if (!ownerId || !Number.isInteger(ownerId)) {
+      reply(Boom.unauthorized())
+    }
+
     const id = request.params.id
-    const cols = this.getQueryCols()
 
     this.buildPayload(request.payload)
       .then(data => {
         knex(db)
-          .where('id', id)
+          .where({ id, ownerId })
           .update(data)
-          .returning(cols)
+          .returning(this.getQueryCols())
             .then(result => {
               reply(result[0])
             }, err => {

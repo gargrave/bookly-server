@@ -3,7 +3,6 @@
 const APIUpdateRoute = require('../../generic-routes/update')
 
 const DB = require('../../../globals/constants').db
-const prereqs = require('../utils/bookPrereqs')
 const validator = require('../utils/bookValidator')
 
 const params = {
@@ -12,10 +11,16 @@ const params = {
   resourceName: 'Book'
 }
 
-module.exports = new APIUpdateRoute(params)
-  .pre([
-    { method: prereqs.ensureUnique, failAction: 'error' }
-  ])
+function BookUpdateRoute () {
+  APIUpdateRoute.call(this, params)
+}
+BookUpdateRoute.prototype = Object.create(APIUpdateRoute.prototype)
+
+BookUpdateRoute.prototype.getQueryCols = function () {
+  return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+}
+
+module.exports = new BookUpdateRoute()
   .validate({
-    payload: validator.create
+    payload: validator.onCreate
   })
