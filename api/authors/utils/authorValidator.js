@@ -2,9 +2,11 @@
 
 const Joi = require('joi')
 
+const baseValidator = {
+  firstName: Joi.string().max(255).required(),
+  lastName: Joi.string().max(255).required()
+}
+
 module.exports = {
-  create: Joi.object({
-    firstName: Joi.string().alphanum().max(255).required(),
-    lastName: Joi.string().alphanum().max(255).required()
-  })
+  onCreate: Joi.object(baseValidator)
 }
