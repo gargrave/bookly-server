@@ -10,4 +10,13 @@ const params = {
   resourceName: 'Book'
 }
 
-module.exports = new APIDetailRoute(params)
+function BookDetailRoute () {
+  APIDetailRoute.call(this, params)
+}
+BookDetailRoute.prototype = Object.create(APIDetailRoute.prototype)
+
+BookDetailRoute.prototype.getQueryCols = function () {
+  return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+}
+
+module.exports = new BookDetailRoute()

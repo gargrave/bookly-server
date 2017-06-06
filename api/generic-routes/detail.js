@@ -11,10 +11,16 @@ function APIDetailRoute ({ path, db, resourceName }) {
   APIRoute.call(this, 'GET', `${path}/{id}`)
 
   this.config.handler = (request, reply) => {
+    const ownerId = request.auth.credentials.id
+    if (!ownerId || !Number.isInteger(ownerId)) {
+      reply(Boom.unauthorized())
+    }
+
     const id = request.params.id
 
     knex(db)
-      .where('id', id)
+      .select(this.getQueryCols())
+      .where({ id, ownerId })
       .limit(1)
       .then(result => {
         if (!result.length) {
