@@ -49,4 +49,4 @@ RegisterRoute.prototype.buildPayload = function (payload) {
 }
 
 module.exports = new RegisterRoute()
-  .validate({ payload: validator.onCreate })
+  .validate({ payload: validator.onRegister })
