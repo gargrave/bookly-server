@@ -45,7 +45,7 @@ function LoginRoute () {
           // generate a JWT, and add it to reply
           const jwtData = { id: user.id, email: user.email }
           const jwtOptions = { expiresIn: 60 * 5 }
-          const token = JWT.sign(jwtData, 'ThisIsMySecret', jwtOptions)
+          const token = JWT.sign(jwtData, process.env.AUTH_SECRET_KEY, jwtOptions)
           user.token = token
 
           // remove the password hash from the reply

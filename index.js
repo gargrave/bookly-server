@@ -9,20 +9,12 @@ const config = require('./config')
 const routes = require('./api/routes')
 
 function validate (decoded, request, callback) {
-  console.log('TODO: Implement validate()')
-  let people = { // our "users database"
-    1: {
-      id: 1,
-      name: 'Jen Jones'
-    }
-  }
-  // do your checks to see if the person is valid
-  if (!people[decoded.id]) {
-    return callback(null, false)
-  } else {
-    return callback(null, true)
-  }
-};
+  callback(null, true)
+}
+
+if (process.env.NODE_ENV === 'dev') {
+  require('./scripts/env/dev')
+}
 
 server.connection(config.server)
 
@@ -32,8 +24,8 @@ server.register(require('hapi-auth-jwt2'), (err) => {
   }
 
   server.auth.strategy('jwt', 'jwt', {
-    key: 'NeverShareYourSecret',
-    validateFunc: validate, // validate function defined above
+    key: process.env.AUTH_SECRET_KEY,
+    validateFunc: validate,
     verifyOptions: {
       algorithms: ['HS256']
     }
