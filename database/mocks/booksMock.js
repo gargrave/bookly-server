@@ -1,26 +1,27 @@
 'use strict'
 
 let data = [
-  { authorId: 1, title: 'Mother Night' },
-  { authorId: 3, title: 'Even Cowgirls Get the Blues' },
-  { authorId: 6, title: 'Nine Stories' },
-  { authorId: 1, title: 'Slapstick' },
-  { authorId: 5, title: 'The Doors of Perception' },
-  { authorId: 4, title: 'A Short History of Nearly Everything' },
-  { authorId: 2, title: 'Fight Club' },
-  { authorId: 1, title: 'Slaughterhouse Five' },
-  { authorId: 7, title: 'The Metamorphasis' },
-  { authorId: 3, title: 'Jitterbug Perfume' },
-  { authorId: 2, title: 'Choke' },
-  { authorId: 4, title: 'The Life and Times of the Thunderbolt Kid' },
-  { authorId: 5, title: 'Island' },
-  { authorId: 1, title: 'The Sirens of Titan' },
-  { authorId: 3, title: 'Half Asleep in Frog Pajamas' },
-  { authorId: 2, title: 'Survivor' },
-  { authorId: 7, title: 'The Trial' },
-  { authorId: 4, title: 'A Walk in the Woods' },
-  { authorId: 5, title: 'Brave New World' },
-  { authorId: 6, title: 'Cather in the Rye' }
+  { ownerId: 1, authorId: 1, title: 'Mother Night' },
+  { ownerId: 1, authorId: 3, title: 'Even Cowgirls Get the Blues' },
+  { ownerId: 1, authorId: 6, title: 'Nine Stories' },
+  { ownerId: 1, authorId: 1, title: 'Slapstick' },
+  { ownerId: 1, authorId: 5, title: 'The Doors of Perception' },
+  { ownerId: 1, authorId: 4, title: 'A Short History of Nearly Everything' },
+  { ownerId: 1, authorId: 2, title: 'Fight Club' },
+  { ownerId: 1, authorId: 1, title: 'Slaughterhouse Five' },
+  { ownerId: 1, authorId: 7, title: 'The Metamorphasis' },
+  { ownerId: 1, authorId: 3, title: 'Jitterbug Perfume' },
+
+  { ownerId: 2, authorId: 9, title: 'Choke' },
+  { ownerId: 2, authorId: 11, title: 'The Life and Times of the Thunderbolt Kid' },
+  { ownerId: 2, authorId: 12, title: 'Island' },
+  { ownerId: 2, authorId: 8, title: 'The Sirens of Titan' },
+  { ownerId: 2, authorId: 12, title: 'Half Asleep in Frog Pajamas' },
+  { ownerId: 2, authorId: 9, title: 'Survivor' },
+  { ownerId: 2, authorId: 14, title: 'The Trial' },
+  { ownerId: 2, authorId: 11, title: 'A Walk in the Woods' },
+  { ownerId: 2, authorId: 12, title: 'Brave New World' },
+  { ownerId: 2, authorId: 13, title: 'Cather in the Rye' }
 ]
 
 module.exports = {
