@@ -4,6 +4,12 @@ exports.up = function (knex, Promise) {
   return knex.schema.createTableIfNotExists(DB.BOOKS, (table) => {
     table.increments('id')
 
+    // ownerId as foreign key to Users table
+    table.integer('ownerId').notNullable()
+    table.foreign('ownerId')
+      .references(`${DB.USERS}.id`)
+      .onDelete('CASCADE')
+
     // authorId as foreign key to Authors table
     table.integer('authorId').notNullable()
     table.foreign('authorId')
