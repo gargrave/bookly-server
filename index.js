@@ -8,11 +8,6 @@ const server = new Hapi.Server()
 const config = require('./config')
 const routes = require('./api/routes')
 
-// run dev script to set up env. vars for dev environment
-if (process.env.NODE_ENV === 'dev') {
-  require('./scripts/env/dev')
-}
-
 function validate (decoded, request, callback) {
   callback(null, true)
 }

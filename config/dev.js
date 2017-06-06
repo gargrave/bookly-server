@@ -2,14 +2,9 @@ console.log('*****')
 console.log('using dev configuration')
 console.log('*****')
 
+// run dev script to set up env. vars for dev environment
+require('../scripts/env/dev')
+
 module.exports = {
-  database: {
-    client: 'pg',
-    connection: {
-      host: 'localhost',
-      database: 'bookly_dev',
-      user: '',
-      password: ''
-    }
-  }
+  database: require('../etc/devDatabase')
 }
