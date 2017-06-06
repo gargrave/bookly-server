@@ -2,6 +2,7 @@
 
 const Bcrypt = require('bcrypt')
 const Boom = require('boom')
+const JWT = require('jsonwebtoken')
 
 const APIRoute = require('../../generic-routes/basic')
 
@@ -40,6 +41,12 @@ function LoginRoute () {
             // non-matching username/password
             return reply(Boom.badRequest(apiErr.invalidLogin()))
           }
+
+          // generate a JWT, and add it to reply
+          const jwtData = { id: user.id, email: user.email }
+          const jwtOptions = { expiresIn: 60 * 5 }
+          const token = JWT.sign(jwtData, 'ThisIsMySecret', jwtOptions)
+          user.token = token
 
           // remove the password hash from the reply
           delete user.password
