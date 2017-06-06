@@ -13,7 +13,8 @@ function RegisterRoute () {
   const params = {
     path: 'auth/register',
     db: DB.USERS,
-    resourceName: 'Users'
+    resourceName: 'Users',
+    auth: false
   }
   APICreateRoute.call(this, params)
 }

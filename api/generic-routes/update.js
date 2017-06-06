@@ -10,28 +10,26 @@ const apiErr = require('../utils/apiErrors')
 function APIUpdateRoute ({ path, db, resourceName }) {
   APIRoute.call(this, ['PUT', 'PATCH'], `${path}/{id}`)
 
-  this.config = {
-    handler: (request, reply) => {
-      const id = request.params.id
-      const cols = this.getQueryCols()
+  this.config.handler = (request, reply) => {
+    const id = request.params.id
+    const cols = this.getQueryCols()
 
-      this.buildPayload(request.payload)
-        .then(data => {
-          knex(db)
-            .where('id', id)
-            .update(data)
-            .returning(cols)
-              .then(result => {
-                reply(result[0])
-              }, err => {
-                console.log(err)
-                reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
-              })
-        }, err => {
-          console.log(err)
-          reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
-        })
-    }
+    this.buildPayload(request.payload)
+      .then(data => {
+        knex(db)
+          .where('id', id)
+          .update(data)
+          .returning(cols)
+            .then(result => {
+              reply(result[0])
+            }, err => {
+              console.log(err)
+              reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
+            })
+      }, err => {
+        console.log(err)
+        reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
+      })
   }
 }
 APIUpdateRoute.prototype = Object.create(APIRoute.prototype)

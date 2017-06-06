@@ -14,40 +14,38 @@ const db = DB.USERS
 const resourceName = 'User'
 
 function LoginRoute () {
-  APIRoute.call(this, 'POST', 'auth/login')
+  APIRoute.call(this, 'POST', 'auth/login', false)
 
-  this.config = {
-    handler: (request, reply) => {
-      const email = request.payload.email.trim()
+  this.config.handler = (request, reply) => {
+    const email = request.payload.email.trim()
 
-      knex(db)
-        .where('email', email)
-        .limit(1)
-        .then(result => {
-          if (!result.length) {
+    knex(db)
+      .where('email', email)
+      .limit(1)
+      .then(result => {
+        if (!result.length) {
+          return reply(Boom.notFound(apiErr.notFound(resourceName, email)))
+        }
+
+        const user = result[0]
+        const hashedPassword = user.password
+        const submittedPassword = request.payload.password
+
+        Bcrypt.compare(submittedPassword, hashedPassword, function (err, match) {
+          if (err) {
+            // some unrelated error
+            console.log(err)
             return reply(Boom.notFound(apiErr.notFound(resourceName, email)))
+          } else if (!match) {
+            // non-matching username/password
+            return reply(Boom.badRequest(apiErr.invalidLogin()))
           }
 
-          const user = result[0]
-          const hashedPassword = user.password
-          const submittedPassword = request.payload.password
-
-          Bcrypt.compare(submittedPassword, hashedPassword, function (err, match) {
-            if (err) {
-              // some unrelated error
-              console.log(err)
-              return reply(Boom.notFound(apiErr.notFound(resourceName, email)))
-            } else if (!match) {
-              // non-matching username/password
-              return reply(Boom.badRequest(apiErr.invalidLogin()))
-            }
-
-            // remove the password hash from the reply
-            delete user.password
-            return reply(user)
-          })
+          // remove the password hash from the reply
+          delete user.password
+          return reply(user)
         })
-    }
+      })
   }
 }
 LoginRoute.prototype = Object.create(APIRoute.prototype)

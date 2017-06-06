@@ -10,20 +10,18 @@ const apiErr = require('../utils/apiErrors')
 function APIDetailRoute ({ path, db, resourceName }) {
   APIRoute.call(this, 'GET', `${path}/{id}`)
 
-  this.config = {
-    handler: (request, reply) => {
-      const id = request.params.id
+  this.config.handler = (request, reply) => {
+    const id = request.params.id
 
-      knex(db)
-        .where('id', id)
-        .limit(1)
-        .then(result => {
-          if (!result.length) {
-            return reply(Boom.notFound(apiErr.notFound(resourceName, id)))
-          }
-          reply(result[0])
-        })
-    }
+    knex(db)
+      .where('id', id)
+      .limit(1)
+      .then(result => {
+        if (!result.length) {
+          return reply(Boom.notFound(apiErr.notFound(resourceName, id)))
+        }
+        reply(result[0])
+      })
   }
 }
 APIDetailRoute.prototype = Object.create(APIRoute.prototype)

@@ -2,11 +2,17 @@
 
 const Boom = require('boom')
 
-function APIRoute (method, path) {
+function APIRoute (method, path, auth) {
   this.method = method
   this.path = `/api/v1/${path}`
 
+  auth = (auth === undefined) ? 'jwt' : auth
+  if (auth !== 'jwt') {
+    console.log('no auth: ' + path)
+  }
+
   this.config = {
+    auth,
     handler: (request, reply) => {
       reply(Boom.notImplemented('Route handler not implemented.'))
     }
