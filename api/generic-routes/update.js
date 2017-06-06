@@ -12,24 +12,42 @@ function APIUpdateRoute ({ path, db, resourceName }) {
 
   this.config = {
     handler: (request, reply) => {
-      const data = Object.assign({},
-        request.payload,
-        { updated_at: knex.raw('NOW()') }
-      )
+      const id = request.params.id
+      const cols = this.getQueryCols()
 
-      knex(db)
-        .where('id', request.params.id)
-        .update(data).returning('*')
-          .then(result => {
-            reply(result)
-          }, err => {
-            console.log(err)
-            reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
-          })
+      this.buildPayload(request.payload)
+        .then(data => {
+          knex(db)
+            .where('id', id)
+            .update(data)
+            .returning(cols)
+              .then(result => {
+                reply(result[0])
+              }, err => {
+                console.log(err)
+                reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
+              })
+        }, err => {
+          console.log(err)
+          reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
+        })
     }
   }
 }
-
 APIUpdateRoute.prototype = Object.create(APIRoute.prototype)
+
+/*
+Override to do the following:
+  - Update the 'updated_at' prop to use NOW()
+*/
+APIUpdateRoute.prototype.buildPayload = function (payload) {
+  return new Promise((resolve, reject) => {
+    resolve(Object.assign(
+      {},
+      payload,
+      { updated_at: knex.raw('NOW()') }
+    ))
+  })
+}
 
 module.exports = APIUpdateRoute
