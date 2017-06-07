@@ -13,6 +13,9 @@ function APIRoute (method, path, auth) {
 
   this.config = {
     auth,
+    cors: {
+      origin: process.env.CORS_WHITELIST.split('|')
+    },
     handler: (request, reply) => {
       reply(Boom.notImplemented('Route handler not implemented.'))
     }
