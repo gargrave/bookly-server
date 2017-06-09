@@ -1,6 +1,6 @@
 'use strict'
 
-const APIRoute = require('../../generic-routes/basic')
+const APIRoute = require('../../generic-routes/basic').APIRoute
 
 function ProfileDetailRoute () {
   APIRoute.call(this, 'GET', 'auth/profiles')

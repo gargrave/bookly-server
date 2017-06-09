@@ -4,7 +4,7 @@ const Bcrypt = require('bcrypt')
 const Boom = require('boom')
 const JWT = require('jsonwebtoken')
 
-const APIRoute = require('../../generic-routes/basic')
+const APIRoute = require('../../generic-routes/basic').APIRoute
 
 const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db

@@ -2,7 +2,7 @@
 
 const Boom = require('boom')
 
-const APIRoute = require('../../generic-routes/basic')
+const APIRoute = require('../../generic-routes/basic').APIRoute
 
 const DB = require('../../../globals/constants').db
 const knex = require('../../../database/db')
