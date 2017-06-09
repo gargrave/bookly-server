@@ -6,6 +6,8 @@ module.exports = [
   // Auth routes
   './api/auth/routes/register',
   './api/auth/routes/login',
+  './api/auth/routes/userDetail',
+  './api/auth/routes/profileDetail',
 
   // Author routes
   './api/authors/routes/createAuthor',
