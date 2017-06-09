@@ -1,55 +1,64 @@
 'use strict'
 
-const Boom = require('boom')
+const ApiRoute = require('./basic').ApiRoute
 
-const APIRoute = require('./basic').APIRoute
+const Boom = require('boom')
 
 const knex = require('../../database/db')
 const apiErr = require('../utils/apiErrors')
 
-function APIUpdateRoute ({ path, db, resourceName }) {
-  APIRoute.call(this, ['PUT', 'PATCH'], `${path}/{id}`)
+class ApiUpdateRoute extends ApiRoute {
+  constructor ({ path, auth, db, resourceName }) {
+    super({
+      method: ['PUT', 'PATCH'],
+      path: `${path}/{id}`,
+      auth
+    })
+    this.db = db
+    this.resourceName = resourceName
+  }
 
-  this.config.handler = (request, reply) => {
-    const ownerId = request.auth.credentials.id
-    if (!ownerId || !Number.isInteger(ownerId)) {
-      reply(Boom.unauthorized())
+  getHandler () {
+    return (request, reply) => {
+      const ownerId = request.auth.credentials.id
+      if (!ownerId || !Number.isInteger(ownerId)) {
+        reply(Boom.unauthorized())
+      }
+
+      const id = request.params.id
+
+      this.buildPayload(request.payload)
+        .then(data => {
+          knex(this.db)
+            .where({ id, ownerId })
+            .update(data)
+            .returning(this.getSelectParams())
+              .then(result => {
+                reply(result[0])
+              }, err => {
+                console.log(err)
+                reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
+              })
+        }, err => {
+          console.log(err)
+          reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
+        })
     }
+  }
 
-    const id = request.params.id
-
-    this.buildPayload(request.payload)
-      .then(data => {
-        knex(db)
-          .where({ id, ownerId })
-          .update(data)
-          .returning(this.getSelectCols())
-            .then(result => {
-              reply(result[0])
-            }, err => {
-              console.log(err)
-              reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
-            })
-      }, err => {
-        console.log(err)
-        reply(Boom.badRequest(apiErr.failedToUpdate(resourceName)))
-      })
+  /**
+   * Override to do the following:
+   *    - Update the 'updated_at' prop to use NOW()
+  */
+  buildPayload (payload) {
+    return new Promise((resolve, reject) => {
+      resolve(Object.assign(
+        {},
+        payload,
+        { updated_at: knex.raw('NOW()') }
+      ))
+    })
   }
 }
-APIUpdateRoute.prototype = Object.create(APIRoute.prototype)
 
-/*
-Override to do the following:
-  - Update the 'updated_at' prop to use NOW()
-*/
-APIUpdateRoute.prototype.buildPayload = function (payload) {
-  return new Promise((resolve, reject) => {
-    resolve(Object.assign(
-      {},
-      payload,
-      { updated_at: knex.raw('NOW()') }
-    ))
-  })
-}
-
-module.exports = APIUpdateRoute
+module.exports = ApiUpdateRoute

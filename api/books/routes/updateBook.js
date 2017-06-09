@@ -1,6 +1,6 @@
 'use strict'
 
-const APIUpdateRoute = require('../../generic-routes/update')
+const ApiUpdateRoute = require('../../generic-routes/update')
 
 const DB = require('../../../globals/constants').db
 const validator = require('../utils/bookValidator')
@@ -11,16 +11,18 @@ const params = {
   resourceName: 'Book'
 }
 
-function BookUpdateRoute () {
-  APIUpdateRoute.call(this, params)
-}
-BookUpdateRoute.prototype = Object.create(APIUpdateRoute.prototype)
+class BookUpdateRoute extends ApiUpdateRoute {
+  constructor () {
+    super(params)
+  }
 
-BookUpdateRoute.prototype.getSelectCols = function () {
-  return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+  getSelectParams () {
+    return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+  }
+
+  getValidators () {
+    return { payload: validator.onCreate }
+  }
 }
 
-module.exports = new BookUpdateRoute()
-  .validate({
-    payload: validator.onCreate
-  })
+module.exports = new BookUpdateRoute().buildRoute()
