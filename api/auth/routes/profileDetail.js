@@ -1,18 +1,26 @@
 'use strict'
 
-const APIRoute = require('../../generic-routes/basic').APIRoute
+const ApiDetailRoute = require('../../generic-routes/detail').ApiDetailRoute
 
-function ProfileDetailRoute () {
-  APIRoute.call(this, 'GET', 'auth/profiles')
+const params = {
+  method: 'GET',
+  path: 'auth/profiles'
+}
 
-  this.config.handler = (request, reply) => {
-    reply({ message: 'Profiles not yet implemented.' })
+class ProfileDetailRoute extends ApiDetailRoute {
+  constructor () {
+    super(params)
+  }
+
+  getHandler () {
+    return (request, reply) => {
+      reply({ message: 'Profiles not yet implemented.' })
+    }
+  }
+
+  getSelectParams () {
+    return ['id', 'ownerId']
   }
 }
-ProfileDetailRoute.prototype = Object.create(APIRoute.prototype)
 
-ProfileDetailRoute.prototype.getSelectCols = function () {
-  return ['id', 'ownerId']
-}
-
-module.exports = new ProfileDetailRoute()
+module.exports = new ProfileDetailRoute().buildRoute()
