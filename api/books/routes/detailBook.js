@@ -1,6 +1,6 @@
 'use strict'
 
-const ApiDetailRoute = require('../../generic-routes/detail').ApiDetailRoute
+const ApiDetailRoute = require('../../generic-routes/detail')
 const DB = require('../../../globals/constants').db
 
 const params = {

@@ -1,6 +1,6 @@
 'use strict'
 
-const ApiCreateRoute = require('../../generic-routes/create').ApiCreateRoute
+const ApiCreateRoute = require('../../generic-routes/create')
 
 const Bcrypt = require('bcrypt')
 

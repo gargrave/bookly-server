@@ -1,6 +1,6 @@
 'use strict'
 
-const ApiRoute = require('../../generic-routes/basic').ApiRoute
+const ApiRoute = require('../../generic-routes/basic')
 
 const Boom = require('boom')
 

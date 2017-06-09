@@ -1,6 +1,6 @@
 'use strict'
 
-const ApiListRoute = require('../../generic-routes/list').ApiListRoute
+const ApiListRoute = require('../../generic-routes/list')
 const DB = require('../../../globals/constants').db
 
 class BooksListRoute extends ApiListRoute {
