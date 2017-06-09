@@ -23,7 +23,7 @@ function APIUpdateRoute ({ path, db, resourceName }) {
         knex(db)
           .where({ id, ownerId })
           .update(data)
-          .returning(this.getQueryCols())
+          .returning(this.getSelectCols())
             .then(result => {
               reply(result[0])
             }, err => {

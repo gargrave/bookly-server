@@ -15,7 +15,7 @@ function BooksListRoute () {
 }
 BooksListRoute.prototype = Object.create(APIListRoute.prototype)
 
-BooksListRoute.prototype.getQueryCols = function () {
+BooksListRoute.prototype.getSelectCols = function () {
   return ['id', 'authorId', 'title', 'created_at', 'updated_at']
 }
 

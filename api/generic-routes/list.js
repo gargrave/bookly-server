@@ -16,7 +16,7 @@ function APIListRoute ({ path, db, resourceName, auth }) {
     }
 
     knex(db)
-      .select(this.getQueryCols())
+      .select(this.getSelectCols())
       .where('ownerId', ownerId)
         .then(results => {
           reply(results)

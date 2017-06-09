@@ -15,7 +15,7 @@ function AuthorsListRoute () {
 }
 AuthorsListRoute.prototype = Object.create(APIListRoute.prototype)
 
-AuthorsListRoute.prototype.getQueryCols = function () {
+AuthorsListRoute.prototype.getSelectCols = function () {
   return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
 }
 

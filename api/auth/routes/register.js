@@ -25,7 +25,7 @@ Override to do the following:
   - Remove password from the selected cols; even though it is a hash at this point,
       it is still preferable not to return it.
 */
-RegisterRoute.prototype.getQueryCols = function () {
+RegisterRoute.prototype.getSelectCols = function () {
   return ['id', 'email', 'created_at', 'updated_at']
 }
 

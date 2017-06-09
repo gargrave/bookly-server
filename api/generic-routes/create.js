@@ -15,7 +15,7 @@ function APICreateRoute ({ path, db, resourceName, auth }) {
       .then(data => {
         knex(db)
           .insert(data)
-          .returning(this.getQueryCols())
+          .returning(this.getSelectCols())
             .then(result => {
               reply(result[0])
             }, err => {

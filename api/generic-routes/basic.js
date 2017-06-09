@@ -39,7 +39,7 @@ Optional overridable function to allow a route to define a specific
 set of columns for a SELECT query.
 Defaults to all cols.
 */
-APIRoute.prototype.getQueryCols = function () {
+APIRoute.prototype.getSelectCols = function () {
   return '*'
 }
 

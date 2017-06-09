@@ -20,7 +20,7 @@ function UserDetailRoute () {
     const id = request.params.id
 
     knex(DB.USERS)
-      .select(this.getQueryCols())
+      .select(this.getSelectCols())
       .where({ 'id': ownerId })
       .limit(1)
       .then(result => {
@@ -33,7 +33,7 @@ function UserDetailRoute () {
 }
 UserDetailRoute.prototype = Object.create(APIRoute.prototype)
 
-UserDetailRoute.prototype.getQueryCols = function () {
+UserDetailRoute.prototype.getSelectCols = function () {
   return ['id', 'email', 'created_at', 'updated_at']
 }
 

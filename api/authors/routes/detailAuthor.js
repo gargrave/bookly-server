@@ -15,7 +15,7 @@ function AuthorDetailRoute () {
 }
 AuthorDetailRoute.prototype = Object.create(APIDetailRoute.prototype)
 
-AuthorDetailRoute.prototype.getQueryCols = function () {
+AuthorDetailRoute.prototype.getSelectCols = function () {
   return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
 }
 

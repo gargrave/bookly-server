@@ -19,7 +19,7 @@ function APIDetailRoute ({ path, db, resourceName }) {
     const id = request.params.id
 
     knex(db)
-      .select(this.getQueryCols())
+      .select(this.getSelectCols())
       .where({ id, ownerId })
       .limit(1)
       .then(result => {

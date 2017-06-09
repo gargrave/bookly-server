@@ -17,7 +17,7 @@ function AuthorCreateRoute () {
 }
 AuthorCreateRoute.prototype = Object.create(APICreateRoute.prototype)
 
-AuthorCreateRoute.prototype.getQueryCols = function () {
+AuthorCreateRoute.prototype.getSelectCols = function () {
   return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
 }
 

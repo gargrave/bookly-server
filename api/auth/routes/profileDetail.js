@@ -11,7 +11,7 @@ function ProfileDetailRoute () {
 }
 ProfileDetailRoute.prototype = Object.create(APIRoute.prototype)
 
-ProfileDetailRoute.prototype.getQueryCols = function () {
+ProfileDetailRoute.prototype.getSelectCols = function () {
   return ['id', 'ownerId']
 }
 
