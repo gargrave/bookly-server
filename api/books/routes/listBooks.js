@@ -1,22 +1,19 @@
 'use strict'
 
-const APIListRoute = require('../../generic-routes/list')
-
+const ApiListRoute = require('../../generic-routes/list').ApiListRoute
 const DB = require('../../../globals/constants').db
 
-const params = {
-  path: 'books',
-  db: DB.BOOKS,
-  resourceName: 'Book'
+class BooksListRoute extends ApiListRoute {
+  constructor () {
+    super({
+      path: 'books',
+      db: DB.BOOKS
+    })
+  }
+
+  getSelectParams () {
+    return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+  }
 }
 
-function BooksListRoute () {
-  APIListRoute.call(this, params)
-}
-BooksListRoute.prototype = Object.create(APIListRoute.prototype)
-
-BooksListRoute.prototype.getSelectCols = function () {
-  return ['id', 'authorId', 'title', 'created_at', 'updated_at']
-}
-
-module.exports = new BooksListRoute()
+module.exports = new BooksListRoute().buildRoute()
