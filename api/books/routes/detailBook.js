@@ -1,7 +1,6 @@
 'use strict'
 
-const APIDetailRoute = require('../../generic-routes/detail')
-
+const ApiDetailRoute = require('../../generic-routes/detail').ApiDetailRoute
 const DB = require('../../../globals/constants').db
 
 const params = {
@@ -10,13 +9,14 @@ const params = {
   resourceName: 'Book'
 }
 
-function BookDetailRoute () {
-  APIDetailRoute.call(this, params)
-}
-BookDetailRoute.prototype = Object.create(APIDetailRoute.prototype)
+class BookDetailRoute extends ApiDetailRoute {
+  constructor () {
+    super(params)
+  }
 
-BookDetailRoute.prototype.getSelectCols = function () {
-  return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+  getSelectParams () {
+    return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+  }
 }
 
-module.exports = new BookDetailRoute()
+module.exports = new BookDetailRoute().buildRoute()
