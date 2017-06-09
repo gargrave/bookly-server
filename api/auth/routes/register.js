@@ -2,7 +2,7 @@
 
 const Bcrypt = require('bcrypt')
 
-const APICreateRoute = require('../../generic-routes/create')
+const APICreateRoute = require('../../generic-routes/create').APICreateRoute
 
 const DB = require('../../../globals/constants').db
 const validator = require('../utils/authValidator')

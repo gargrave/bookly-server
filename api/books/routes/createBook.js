@@ -1,6 +1,6 @@
 'use strict'
 
-const APICreateRoute = require('../../generic-routes/create')
+const ApiCreateRoute = require('../../generic-routes/create').ApiCreateRoute
 
 const DB = require('../../../globals/constants').db
 const prereqs = require('../../utils/prereqs')
@@ -12,19 +12,24 @@ const params = {
   resourceName: 'Book'
 }
 
-function BookCreateRoute () {
-  APICreateRoute.call(this, params)
-}
-BookCreateRoute.prototype = Object.create(APICreateRoute.prototype)
+class BookCreateRoute extends ApiCreateRoute {
+  constructor () {
+    super(params)
+  }
 
-BookCreateRoute.prototype.getSelectCols = function () {
-  return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+  getSelectParams () {
+    return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+  }
+
+  getPrerequisites () {
+    return [
+      { method: prereqs.populateOwnerId, failAction: 'error' }
+    ]
+  }
+
+  getValidators () {
+    return { payload: validator.onCreate }
+  }
 }
 
-module.exports = new BookCreateRoute()
-  .pre([
-    { method: prereqs.populateOwnerId, failAction: 'error' }
-  ])
-  .validate({
-    payload: validator.onCreate
-  })
+module.exports = new BookCreateRoute().buildRoute()

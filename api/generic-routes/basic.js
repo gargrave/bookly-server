@@ -10,7 +10,9 @@ class ApiRoute {
 
     this.config = {
       // auth defaults to JWT unless otherwise specified
-      auth: auth || 'jwt'
+      auth: auth || 'jwt',
+      pre: this.getPrerequisites(),
+      validate: this.getValidators()
     }
   }
 
@@ -45,6 +47,24 @@ class ApiRoute {
    */
   getSelectParams () {
     return '*'
+  }
+
+   /**
+   * Optional overridable function to allow a route to define a specific
+   * set of route prerequisites. Should return an array of objects.
+   * Defaults to empty array.
+   */
+  getPrerequisites () {
+    return []
+  }
+
+  /**
+   * Optional overridable function to allow a route to define a specific
+   * set of route validations functions. Should return an object.
+   * Defaults to empty object.
+   */
+  getValidators () {
+    return {}
   }
 
   /**
