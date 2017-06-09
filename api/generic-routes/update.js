@@ -12,10 +12,10 @@ class ApiUpdateRoute extends ApiRoute {
     super({
       method: ['PUT', 'PATCH'],
       path: `${path}/{id}`,
-      auth
+      auth,
+      db,
+      resourceName
     })
-    this.db = db
-    this.resourceName = resourceName
   }
 
   getHandler () {

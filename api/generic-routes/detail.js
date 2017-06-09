@@ -12,10 +12,10 @@ class ApiDetailRoute extends ApiRoute {
     super({
       method: 'GET',
       path: `${path}/{id}`,
-      auth
+      auth,
+      db,
+      resourceName
     })
-    this.db = db
-    this.resourceName = resourceName
   }
 
   getHandler () {

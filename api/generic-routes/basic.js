@@ -3,7 +3,12 @@
 const Boom = require('boom')
 
 class ApiRoute {
-  constructor ({ method, path, auth }) {
+  constructor (params) {
+    const { method, path, auth, db, resourceName } = params
+
+    this.db = db || ''
+    this.resourceName = resourceName || ''
+
     this.method = method
     this.path = `/api/v1/${path}`
     this.handler = this.getHandler()

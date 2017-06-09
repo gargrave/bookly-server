@@ -18,8 +18,6 @@ const params = {
 class UserDetailRoute extends ApiRoute {
   constructor () {
     super(params)
-    this.db = params.db
-    this.resourceName = params.resourceName
   }
 
   getHandler () {

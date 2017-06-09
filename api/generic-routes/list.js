@@ -8,8 +8,12 @@ const knex = require('../../database/db')
 
 class ApiListRoute extends ApiRoute {
   constructor ({ path, auth, db }) {
-    super({ method: 'GET', path, auth })
-    this.db = db
+    super({
+      method: 'GET',
+      path,
+      auth,
+      db
+    })
   }
 
   getHandler () {

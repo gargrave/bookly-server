@@ -9,9 +9,13 @@ const apiErr = require('../utils/apiErrors')
 
 class ApiCreateRoute extends ApiRoute {
   constructor ({ path, auth, db, resourceName }) {
-    super({ method: 'POST', path, auth })
-    this.db = db
-    this.resourceName = resourceName
+    super({
+      method: 'POST',
+      path,
+      auth,
+      db,
+      resourceName
+    })
   }
 
   getHandler () {
