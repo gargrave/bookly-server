@@ -18,6 +18,9 @@ class ApiRoute {
       // NOTE: we do need to explicity check if auth is undefined,
       // because a route with no auth will defined FALSE for auth
       auth: (auth === undefined) ? 'jwt' : auth,
+      cors: {
+        origin: process.env.CORS_WHITELIST.split(',')
+      },
       pre: this.getPrerequisites(),
       validate: this.getValidators()
     }
