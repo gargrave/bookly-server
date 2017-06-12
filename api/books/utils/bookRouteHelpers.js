@@ -1,7 +1,7 @@
 module.exports = {
   selectCols: [
-    'Books.id', 'title', 'Books.created_at', 'Books.updated_at',
-    'authorId', 'Authors.firstName', 'Authors.lastName'
+    'Books.id', 'Books.title', 'Books.created_at', 'Books.updated_at',
+    'Books.authorId', 'Authors.firstName', 'Authors.lastName'
   ],
 
   populateAuthor: function (reply) {
