@@ -43,7 +43,7 @@ class BookUpdateRoute extends ApiUpdateRoute {
                 // JOIN and RETURNING clause at the same time
                 const authorId = result[0].authorId
                 knex(DB.AUTHORS)
-                  .select(['firstName', 'lastName', 'id'])
+                  .select(['id as authorId', 'firstName', 'lastName'])
                   .where({
                     ownerId,
                     id: authorId

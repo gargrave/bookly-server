@@ -36,7 +36,7 @@ class BookCreateRoute extends ApiCreateRoute {
                 // JOIN and RETURNING clause at the same time
                 const authorId = data.authorId
                 knex(DB.AUTHORS)
-                  .select(['firstName', 'lastName', 'id'])
+                  .select(['id as authorId', 'firstName', 'lastName'])
                   .where({
                     [`${DB.AUTHORS}.ownerId`]: data.ownerId,
                     [`${DB.AUTHORS}.id`]: authorId
