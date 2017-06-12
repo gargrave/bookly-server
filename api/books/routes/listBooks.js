@@ -6,6 +6,7 @@ const Boom = require('boom')
 
 const DB = require('../../../globals/constants').db
 const knex = require('../../../database/db')
+const helpers = require('../utils/bookRouteHelpers')
 
 class BooksListRoute extends ApiListRoute {
   constructor () {
@@ -30,35 +31,13 @@ class BooksListRoute extends ApiListRoute {
         .innerJoin(DB.AUTHORS, `${DB.BOOKS}.authorId`, `${DB.AUTHORS}.id`)
         .where({ [`${DB.BOOKS}.ownerId`]: ownerId })
           .then(results => {
-            reply(this.parseReply(results))
+            reply(helpers.populateAuthor(results))
           })
     }
   }
 
   getSelectParams () {
-    return [
-      'Books.id', 'title', 'Books.created_at', 'Books.updated_at',
-      'authorId', 'Authors.firstName', 'Authors.lastName']
-  }
-
-  /*
-   * Custom reply parser to build a nice clean 'author' object within the book.
-   * The original DB query has all the data, but it is not very presented.
-   */
-  parseReply (reply) {
-    for (let book of reply) {
-      // build a cleaner version of the author
-      book.author = {
-        id: book.authorId,
-        name: `${book.firstName} ${book.lastName}`
-      }
-
-      // remove the original fields
-      delete book.authorId
-      delete book.firstName
-      delete book.lastName
-    }
-    return reply
+    return helpers.selectCols
   }
 }
 
