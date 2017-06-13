@@ -3,8 +3,12 @@
 const ApiCreateRoute = require('../../generic-routes/create')
 
 const Bcrypt = require('bcrypt')
+const Boom = require('boom')
+const JWT = require('jsonwebtoken')
 
+const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
+const apiErr = require('../../utils/apiErrors')
 const validator = require('../utils/authValidator')
 
 const params = {
@@ -17,6 +21,33 @@ const params = {
 class RegisterRoute extends ApiCreateRoute {
   constructor () {
     super(params)
+  }
+
+  getHandler () {
+    return (request, reply) => {
+      this.buildPayload(request.payload)
+        .then(data => {
+          knex(this.db)
+            .insert(data)
+            .returning(this.getSelectParams())
+              .then(result => {
+                const user = result[0]
+                // TODO: move this to an 'after hook'
+                // generate a JWT, and add it to reply
+                const jwtData = { id: user.id, email: user.email }
+                const jwtOptions = { expiresIn: 60 * 60 * 8 }
+                const token = JWT.sign(jwtData, process.env.AUTH_SECRET_KEY, jwtOptions)
+                user.token = token
+                reply(user)
+              }, err => {
+                console.error(err)
+                reply(Boom.badRequest(apiErr.failedToCreate(this.resourceName)))
+              })
+        }, err => {
+          console.error(err)
+          reply(Boom.badRequest(apiErr.failedToCreate(this.resourceName)))
+        })
+    }
   }
 
   /**
