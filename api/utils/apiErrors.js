@@ -9,6 +9,11 @@ module.exports = {
     return `${modelName} update failed.`
   },
 
+  // error deleting an existing record
+  failedToDelete (modelName) {
+    return `${modelName} delete failed.`
+  },
+
   // attempting to create a duplicate entry
   matchingRecord (modelName) {
     return `A matching ${modelName} already exists.`
