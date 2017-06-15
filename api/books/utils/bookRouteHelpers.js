@@ -1,16 +1,24 @@
+const DB = require('../../../globals/constants').db
+
 module.exports = {
+  params: {
+    path: 'books',
+    db: DB.BOOKS,
+    resourceName: 'Book'
+  },
+
   selectCols: [
     'Books.id', 'Books.title', 'Books.created_at', 'Books.updated_at',
     'Books.authorId', 'Authors.firstName', 'Authors.lastName'
   ],
 
-  populateAuthor: function (reply) {
-    if (Array.isArray(reply)) {
-      for (let book of reply) {
+  populateAuthor: function (bookQueryResult) {
+    if (Array.isArray(bookQueryResult)) {
+      for (let book of bookQueryResult) {
         parseBook(book)
       }
     } else {
-      parseBook(reply)
+      parseBook(bookQueryResult)
     }
 
     function parseBook (book) {
@@ -26,6 +34,6 @@ module.exports = {
       delete book.lastName
     }
 
-    return reply
+    return bookQueryResult
   }
 }
