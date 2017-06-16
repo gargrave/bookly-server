@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "dev": "clear && NODE_ENV=dev nodemon index.js",
-    "db:dev:migrate": "clear && NODE_ENV=dev node ./scripts/db/migrate",
-    "db:dev:rollback": "clear && NODE_ENV=dev node ./scripts/db/rollback",
-    "db:dev:seed": "clear && NODE_ENV=dev node ./scripts/db/seed"
+    "dev": "NODE_ENV=dev nodemon index.js",
+    "db:dev:migrate": "NODE_ENV=dev node ./scripts/db/migrate",
+    "db:dev:rollback": "NODE_ENV=dev node ./scripts/db/rollback",
+    "db:dev:seed": "NODE_ENV=dev node ./scripts/db/seed"
   },
   "author": "",
   "license": "ISC",
