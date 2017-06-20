@@ -1,18 +1,16 @@
-version: '2'
+version: '3'
 services:
   web:
-    build: .
-    command: npm run dev
-    volumes:
-      - .:/usr/app/
-      - /usr/app/node_modules
-    ports:
-      - "3001:3001"
+    build: ./scripts/docker/nginx/
     links:
-      - postgres
+      - node
+    ports:
+      - "80:80"
 
-  postgres:
-    image: postgres:9.6.3-alpine
-    environment:
-      POSTGRES_USER: bookly_dev_user
-      POSTGRES_DB: bookly_dev
+  node:
+    build:
+      context: .
+      dockerfile: ./scripts/docker/node/Dockerfile
+    command: npm run dev
+    ports:
+      - "3001"
