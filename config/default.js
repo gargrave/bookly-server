@@ -1,7 +1,4 @@
-if (process.env.NODE_ENV === 'dev') {
-  // run dev script to set up env. vars for dev environment
-  require('../etc/devEnvVars')
-}
+require('../etc/envVars')
 
 module.exports = {
   server: {
