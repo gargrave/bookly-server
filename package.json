@@ -7,17 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "NODE_ENV=dev nodemon index.js",
-
     "db:dev:migrate": "NODE_ENV=dev node ./scripts/db/migrate",
     "db:dev:rollback": "NODE_ENV=dev node ./scripts/db/rollback",
     "db:dev:seed": "NODE_ENV=dev node ./scripts/db/seed",
-
     "docker-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^1.0.2",
+    "bcrypt-nodejs": "0.0.3",
     "blipp": "^2.3.0",
     "boom": "^5.1.0",
     "eslint": "^3.19.0",

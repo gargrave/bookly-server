@@ -2,7 +2,7 @@
 
 const ApiRoute = require('../../generic-routes/basic')
 
-const Bcrypt = require('bcrypt')
+const Bcrypt = require('bcrypt-nodejs')
 const Boom = require('boom')
 const JWT = require('jsonwebtoken')
 

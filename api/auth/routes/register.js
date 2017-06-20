@@ -2,7 +2,7 @@
 
 const ApiCreateRoute = require('../../generic-routes/create')
 
-const Bcrypt = require('bcrypt')
+const Bcrypt = require('bcrypt-nodejs')
 const Boom = require('boom')
 const JWT = require('jsonwebtoken')
 
@@ -65,9 +65,9 @@ class RegisterRoute extends ApiCreateRoute {
    *    - Remove the 'passwordConfirm' property, as it is no longer needed at this point
    */
   buildPayload (payload) {
-    const SALT_ROUNDS = 10
+    // const SALT_ROUNDS = 10
     return new Promise((resolve, reject) => {
-      Bcrypt.hash(payload.password, SALT_ROUNDS, (err, hash) => {
+      Bcrypt.hash(payload.password, null, null, (err, hash) => {
         if (err) {
           console.error(`Error in generating hash: ${err}`)
           reject(payload)
