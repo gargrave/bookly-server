@@ -11,6 +11,13 @@ services:
     build:
       context: .
       dockerfile: ./scripts/docker/node/Dockerfile
-    command: npm run dev
     ports:
       - "3001"
+    links:
+      - postgres
+
+  postgres:
+    image: postgres:9.6.3-alpine
+    environment:
+      POSTGRES_USER: bookly_dev_user
+      POSTGRES_DB: bookly_dev
