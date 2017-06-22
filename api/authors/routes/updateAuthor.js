@@ -3,6 +3,7 @@
 const ApiUpdateRoute = require('../../generic-routes/update')
 
 const DB = require('../../../globals/constants').db
+const helpers = require('../utils/authorRouteHelpers')
 const validator = require('../utils/authorValidator')
 
 const params = {
@@ -17,7 +18,7 @@ class AuthorUpdateRoute extends ApiUpdateRoute {
   }
 
   getSelectParams () {
-    return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
+    return helpers.selectCols
   }
 
   getValidators () {

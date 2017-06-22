@@ -1,7 +1,9 @@
 'use strict'
 
 const ApiListRoute = require('../../generic-routes/list')
+
 const DB = require('../../../globals/constants').db
+const helpers = require('../utils/authorRouteHelpers')
 
 class AuthorsListRoute extends ApiListRoute {
   constructor () {
@@ -12,7 +14,7 @@ class AuthorsListRoute extends ApiListRoute {
   }
 
   getSelectParams () {
-    return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
+    return helpers.selectCols
   }
 }
 

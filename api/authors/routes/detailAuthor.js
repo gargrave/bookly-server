@@ -1,7 +1,9 @@
 'use strict'
 
 const ApiDetailRoute = require('../../generic-routes/detail')
+
 const DB = require('../../../globals/constants').db
+const helpers = require('../utils/authorRouteHelpers')
 
 const params = {
   path: 'authors',
@@ -15,7 +17,7 @@ class AuthorDetailRoute extends ApiDetailRoute {
   }
 
   getSelectParams () {
-    return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
+    return helpers.selectCols
   }
 }
 

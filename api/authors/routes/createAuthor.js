@@ -3,6 +3,7 @@
 const ApiCreateRoute = require('../../generic-routes/create')
 
 const DB = require('../../../globals/constants').db
+const helpers = require('../utils/authorRouteHelpers')
 const prereqs = require('../../utils/prereqs')
 const validator = require('../utils/authorValidator')
 
@@ -18,7 +19,7 @@ class AuthorCreateRoute extends ApiCreateRoute {
   }
 
   getSelectParams () {
-    return ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
+    return helpers.selectCols
   }
 
   getPrerequisites () {
