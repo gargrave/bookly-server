@@ -1,4 +1,9 @@
 module.exports = {
+  // error listing existing records
+  failedToList (modelName) {
+    return `${modelName} listing failed.`
+  },
+
   // error creating a new record
   failedToCreate (modelName) {
     return `${modelName} creation failed.`
