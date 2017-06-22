@@ -1,4 +1,4 @@
-# Required Files
+# Required Config Files
 
 The following files will need to be recreated before the app can be run, as they set necessary environment variables. These will be included when you run either the `docker-dev` or `docker-prod` commands in NPM.
 
