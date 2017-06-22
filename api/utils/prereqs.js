@@ -1,15 +1,10 @@
 'use strict'
 
-const Boom = require('boom')
+const helpers = require('./routeHelpers')
 
 module.exports = {
   populateOwnerId (request, reply) {
-    const ownerId = request.auth.credentials.id
-    if (!ownerId || !Number.isInteger(ownerId)) {
-      return reply(Boom.unauthorized())
-    }
-
-    request.payload.ownerId = ownerId
+    request.payload.ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
     return reply()
   }
 }
