@@ -29,12 +29,11 @@ class ApiListRoute extends ApiRoute {
   /**
    * Runs all necessary queries and returns either error or data.
    *
-   * @param {*} id The ID nubmer of the record to delete
    * @param {*} ownerId The owner ID of the user making the request
    */
   async query (ownerId) {
-    let sel = await this.runSelectQuery({ ownerId })
-    return sel
+    let result = await this.runSelectQuery({ ownerId })
+    return result
   }
 
   /**
@@ -44,7 +43,7 @@ class ApiListRoute extends ApiRoute {
    * @param {Object} where The data to use for the WHERE clause
    */
   async runSelectQuery (where) {
-    let val = Boom.notFound(apiErr.failedToList(this.resourceName))
+    let val = Boom.badRequest(apiErr.failedToList(this.resourceName))
 
     await knex(this.db)
       .select(this.getSelectParams())
