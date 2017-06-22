@@ -24,17 +24,41 @@ class ApiDetailRoute extends ApiRoute {
       const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
       const id = request.params.id
 
-      knex(this.db)
-        .select(this.getSelectParams())
-        .where({ id, ownerId })
-        .limit(1)
-        .then(result => {
-          if (!result.length) {
-            return reply(Boom.notFound(apiErr.notFound(this.resourceName, id)))
-          }
-          reply(result[0])
-        })
+      this.query(id, ownerId).then(res => reply(res))
     }
+  }
+
+  /**
+   * Runs all necessary queries and returns either error or data.
+   *
+   * @param {*} id The ID nubmer of the record to delete
+   * @param {*} ownerId The owner ID of the user making the request
+   */
+  async query (id, ownerId) {
+    let result = await this.runSelectQuery({ id, ownerId })
+    return result
+  }
+
+  /**
+   * Runs a SELECT query before the resource is deleted. This way we can
+   * have the original data to return AFTER it has been deleted.
+   *
+   * @param {Object} where The data to use for the WHERE clause
+   */
+  async runSelectQuery (where) {
+    let val = Boom.badRequest(apiErr.notFound(this.resourceName, where.id))
+
+    await knex(this.db)
+      .select(this.getSelectParams())
+      .where(where)
+      .limit(1)
+      .then(res => {
+        if (res.length) {
+          val = res[0]
+        }
+      })
+
+    return val
   }
 }
 
