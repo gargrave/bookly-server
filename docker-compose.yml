@@ -11,6 +11,3 @@ services:
 
   postgres:
     image: postgres:9.6.3-alpine
-    environment:
-      POSTGRES_USER: bookly_dev_user
-      POSTGRES_DB: bookly_dev
