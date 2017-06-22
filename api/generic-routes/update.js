@@ -26,16 +26,7 @@ class ApiUpdateRoute extends ApiRoute {
 
       this.buildPayload(request.payload)
         .then(data => {
-          knex(this.db)
-            .where({ id, ownerId })
-            .update(data)
-            .returning(this.getSelectParams())
-              .then(result => {
-                reply(result[0])
-              }, err => {
-                console.log(err)
-                reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
-              })
+          this.query(id, ownerId, data).then(res => reply(res))
         }, err => {
           console.log(err)
           reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
@@ -55,6 +46,39 @@ class ApiUpdateRoute extends ApiRoute {
         { updated_at: knex.raw('NOW()') }
       ))
     })
+  }
+
+  /**
+   * Runs all necessary queries and returns either error or data.
+   *
+   * @param {Object} data The payload data for the create request
+   */
+  async query (id, ownerId, data) {
+    let result = await this.runUpdateQuery({ id, ownerId }, data)
+    return result
+  }
+
+  /**
+   * Runs a SELECT query before the resource is deleted. This way we can
+   * have the original data to return AFTER it has been deleted.
+   *
+   * @param {Object} where The data to use for the WHERE clause
+   * @param {Object} data The payload data for the create request
+   */
+  async runUpdateQuery (where, data) {
+    let val = Boom.badRequest(apiErr.failedToUpdate(this.resourceName))
+
+    await knex(this.db)
+      .where(where)
+      .update(data)
+      .returning(this.getSelectParams())
+        .then(res => {
+          if (res.length) {
+            val = res[0]
+          }
+        })
+
+    return val
   }
 }
 
