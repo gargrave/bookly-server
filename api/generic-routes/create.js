@@ -22,20 +22,41 @@ class ApiCreateRoute extends ApiRoute {
     return (request, reply) => {
       this.buildPayload(request.payload)
         .then(data => {
-          knex(this.db)
-            .insert(data)
-            .returning(this.getSelectParams())
-              .then(result => {
-                reply(result[0])
-              }, err => {
-                console.error(err)
-                reply(Boom.badRequest(apiErr.failedToCreate(this.resourceName)))
-              })
+          this.query(data).then(res => reply(res))
         }, err => {
           console.error(err)
           reply(Boom.badRequest(apiErr.failedToCreate(this.resourceName)))
         })
     }
+  }
+
+  /**
+   * Runs all necessary queries and returns either error or data.
+   *
+   * @param {Object} data The payload data for the create request
+   */
+  async query (data) {
+    let result = await this.runCreateQuery(data)
+    return result
+  }
+
+  /**
+   * Runs a SELECT query before the resource is deleted. This way we can
+   * have the original data to return AFTER it has been deleted.
+   *
+   * @param {Object} data The payload data for the create request
+   */
+  async runCreateQuery (data) {
+    let val = Boom.badRequest(apiErr.failedToCreate(this.resourceName))
+
+    await knex(this.db)
+      .insert(data)
+      .returning(this.getSelectParams())
+        .then(result => {
+          val = result[0]
+        })
+
+    return val
   }
 }
 
