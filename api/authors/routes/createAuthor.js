@@ -2,20 +2,13 @@
 
 const ApiCreateRoute = require('../../generic-routes/create')
 
-const DB = require('../../../globals/constants').db
 const helpers = require('../utils/authorRouteHelpers')
 const prereqs = require('../../utils/prereqs')
 const validator = require('../utils/authorValidator')
 
-const params = {
-  path: 'authors',
-  db: DB.AUTHORS,
-  resourceName: 'Author'
-}
-
 class AuthorCreateRoute extends ApiCreateRoute {
   constructor () {
-    super(params)
+    super(helpers.params)
   }
 
   getSelectParams () {
