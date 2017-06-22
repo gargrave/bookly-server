@@ -24,7 +24,7 @@ class ApiDeleteRoute extends ApiRoute {
       const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
       const id = request.params.id
 
-      this.query(id, ownerId).then(res => { reply(res) })
+      this.query(id, ownerId).then(res => reply(res))
     }
   }
 
