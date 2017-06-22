@@ -7,6 +7,7 @@ const Boom = require('boom')
 const DB = require('../../../globals/constants').db
 const knex = require('../../../database/db')
 const apiErr = require('../../utils/apiErrors')
+const helpers = require('../../utils/routeHelpers')
 
 const params = {
   method: 'GET',
@@ -22,11 +23,7 @@ class UserDetailRoute extends ApiRoute {
 
   getHandler () {
     return (request, reply) => {
-      const ownerId = request.auth.credentials.id
-      if (!ownerId || !Number.isInteger(ownerId)) {
-        reply(Boom.unauthorized())
-      }
-
+      const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
       const id = request.params.id
 
       knex(this.db)
