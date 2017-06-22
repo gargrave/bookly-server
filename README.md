@@ -12,6 +12,14 @@ The simplified version of my goals for this project:
 
 ---
 
+## Demo and Front End Code
+
+You can play with the current build of the app [here](https://www.bookly-app.us). Bear in mind it's a work in progress, but at this point it is a mostly-functional if not very exciting app. It will continue to be updated as I make progress.
+
+The codebase for the front end you are using in this demo is available [here](https://github.com/gargrave/bookly-client).
+
+---
+
 ## Q&D Overview
 
 Just a few highlights:
