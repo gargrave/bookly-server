@@ -1,9 +1,6 @@
 {
   "eslint.autoFixOnSave": true,
   "eslint.enable": true,
-  "files.associations": {
-    ".sequelizerc": "javascript"
-  },
   "files.exclude": {
     "dist": true
   },
