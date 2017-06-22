@@ -2,9 +2,8 @@
 
 const ApiRoute = require('./basic')
 
-const Boom = require('boom')
-
 const knex = require('../../database/db')
+const helpers = require('../utils/routeHelpers')
 
 class ApiListRoute extends ApiRoute {
   constructor ({ path, auth, db }) {
@@ -18,10 +17,7 @@ class ApiListRoute extends ApiRoute {
 
   getHandler () {
     return (request, reply) => {
-      const ownerId = request.auth.credentials.id
-      if (!ownerId || !Number.isInteger(ownerId)) {
-        reply(Boom.unauthorized())
-      }
+      const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
 
       knex(this.db)
         .select(this.getSelectParams())

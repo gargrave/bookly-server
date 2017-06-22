@@ -6,6 +6,7 @@ const Boom = require('boom')
 
 const knex = require('../../database/db')
 const apiErr = require('../utils/apiErrors')
+const helpers = require('../utils/routeHelpers')
 
 class ApiUpdateRoute extends ApiRoute {
   constructor ({ path, auth, db, resourceName }) {
@@ -20,11 +21,7 @@ class ApiUpdateRoute extends ApiRoute {
 
   getHandler () {
     return (request, reply) => {
-      const ownerId = request.auth.credentials.id
-      if (!ownerId || !Number.isInteger(ownerId)) {
-        reply(Boom.unauthorized())
-      }
-
+      const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
       const id = request.params.id
 
       this.buildPayload(request.payload)
