@@ -16,7 +16,7 @@
     "db:prod:migrate": "NODE_ENV=prod node ./scripts/db/migrate",
     "db:prod:rollback": "NODE_ENV=prod node ./scripts/db/rollback",
 
-    "docker-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+    "docker-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up",
     "docker-prod": "docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d"
   },
   "author": "",
