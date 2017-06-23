@@ -27,41 +27,60 @@ class LoginRoute extends ApiRoute {
   getHandler () {
     return (request, reply) => {
       const email = request.payload.email.trim()
+      const password = request.payload.password.trim()
 
-      knex(this.db)
-        .where('email', email)
-        .limit(1)
-        .then(result => {
-          if (!result.length) {
-            return reply(Boom.notFound(apiErr.notFound(this.resourceName, email)))
-          }
+      this.query(email, password).then(res => reply(res))
+    }
+  }
 
-          const user = result[0]
+  async query (email, password) {
+    let result = await this.runSelectQuery(email, password)
+    return result
+  }
+
+  async runSelectQuery (email, password) {
+    let val = Boom.badRequest(apiErr.invalidLogin())
+
+    await knex(this.db)
+      .select()
+      .where({ email })
+      .limit(1)
+      .then(res => {
+        if (res.length) {
+          const user = res[0]
+          const submittedPassword = password
           const hashedPassword = user.password
-          const submittedPassword = request.payload.password
 
           Bcrypt.compare(submittedPassword, hashedPassword, function (err, match) {
             if (err) {
               // some unrelated error
-              console.log(err)
-              return reply(Boom.notFound(apiErr.notFound(this.esourceName, email)))
+              console.error(err)
+              val = Boom.notFound(apiErr.notFound(this.esourceName, email))
             } else if (!match) {
               // non-matching username/password
-              return reply(Boom.badRequest(apiErr.invalidLogin()))
+              val = Boom.badRequest(apiErr.invalidLogin())
+            } else {
+              // credentials successfully verified!
+              // generate a JWT, and add it to reply
+              const jwtData = { id: user.id, email: user.email }
+              const duration = process.env.JWT_DEFAULT_DURATION || (60 * 60)
+              const jwtOptions = { expiresIn: duration }
+              const token = JWT.sign(jwtData, process.env.AUTH_SECRET_KEY, jwtOptions)
+              user.token = token
+
+              // remove the password hash from the reply
+              delete user.password
+
+              val = user
             }
-
-            // generate a JWT, and add it to reply
-            const jwtData = { id: user.id, email: user.email }
-            const jwtOptions = { expiresIn: 60 * 60 }
-            const token = JWT.sign(jwtData, process.env.AUTH_SECRET_KEY, jwtOptions)
-            user.token = token
-
-            // remove the password hash from the reply
-            delete user.password
-            return reply(user)
           })
-        })
-    }
+        }
+      }, err => {
+        // no need for anything special for an error here, as the Boom error will be returned by default
+        console.error(err)
+      })
+
+    return val
   }
 
   getValidators () {
