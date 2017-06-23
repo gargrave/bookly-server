@@ -40,7 +40,7 @@ class UserDetailRoute extends ApiRoute {
   }
 
   getSelectParams () {
-    return ['id', 'email', 'created_at', 'updated_at']
+    return ['id', 'email', 'created_at', 'updated_at', 'last_login']
   }
 }
 
