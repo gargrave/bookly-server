@@ -8,18 +8,36 @@ These should all be included within an `etc` folder in the project's root (this 
 
 ### envVars.js
 
-Environment variables for Node. Needs to include the following (required unless otherwise stated):
+Environment variables for Node. Needs to include the following:
 
-  - `AUTH_SECRET_KEY` - string to use for the "secret key" for signing JWTs. You can easily generate one with Node using the method shown [here](https://www.npmjs.com/package/hapi-auth-jwt2#generating-your-secret-key).
-  - `DATABASE_URL` - The PG connection string to get to the database.
-  - `CORS_WHITELIST` (optional) - A comma-separated string of fully-qualified URLs that should be allowed through CORS restrictions. This can be ommitted if preferred, in which case CORS will remain disabled for all routes.
+#### Required Keys
 
-A sample file might look like this:
+- `AUTH_SECRET_KEY` - string to use for the "secret key" for signing JWTs. You can easily generate one with Node using the method shown [here](https://www.npmjs.com/package/hapi-auth-jwt2#generating-your-secret-key).
+- `DATABASE_URL` - The PG connection string to get to the database.
+
+#### Optional Keys
+
+- `CORS_WHITELIST` - A comma-separated string of fully-qualified URLs that should be allowed through CORS restrictions. This can be ommitted if preferred, in which case CORS will remain disabled for all routes.
+- `JWT_DEFAULT_DURATION` - The default time after which a JWT will expire. Should be expressed in seconds (i.e. a value of `60 * 60` will give you a JWT that expires 1 hour after being issued). If you do not specify anything here, the default value of 1 hour will be used.
+
+A sample file might look like this. You don't really have to create an object and loop through it like this. I just find it a little cleaner to not have `process.env` written out for every var.
 
 ```js
-process.env.AUTH_SECRET_KEY = 'ineedabettersecretkey'
-process.env.DATABASE_URL = 'postgres://db_user:db_password@postgres/db_name'
-process.env.CORS_WHITELIST = 'http://localhost:8080,https://mygreatwebsite.net'
+const jwtDuration = 60 * 60
+
+const envVars = {
+  // required
+  AUTH_SECRET_KEY: 'ineedabettersecretkey',
+  DATABASE_URL: 'postgres://db_user:db_password@postgres/db_name',
+
+  // optional
+  CORS_WHITELIST: 'http://localhost:8080,https://mygreatwebsite.net',
+  JWT_DEFAULT_DURATION: jwtDuration
+}
+
+for (let v in envVars) {
+  process.env[v] = envVars[v]
+}
 ```
 
 ---
