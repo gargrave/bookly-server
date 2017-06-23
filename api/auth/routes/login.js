@@ -4,11 +4,11 @@ const ApiRoute = require('../../generic-routes/basic')
 
 const Bcrypt = require('bcrypt-nodejs')
 const Boom = require('boom')
-const JWT = require('jsonwebtoken')
 
 const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
 const apiErr = require('../../utils/apiErrors')
+const helpers = require('../utils/authRouteHelpers')
 const validator = require('../utils/authValidator')
 
 const params = {
@@ -35,11 +35,15 @@ class LoginRoute extends ApiRoute {
 
   async query (email, password) {
     let result = await this.runSelectQuery(email, password)
-    result = await this.runUpdateQuery(result)
 
-    // remove unnecessary fields from the reply
-    delete result.password
-    delete result.previous_login
+    // if the result has an 'id' property, it is a User
+    // otherwise, it is a Boom error, and we should just return it as is
+    if (result.id) {
+      result = await this.runUpdateQuery(result)
+      // remove unnecessary fields from the reply
+      delete result.password
+      delete result.previous_login
+    }
 
     return result
   }
