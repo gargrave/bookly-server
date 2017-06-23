@@ -35,6 +35,12 @@ class LoginRoute extends ApiRoute {
 
   async query (email, password) {
     let result = await this.runSelectQuery(email, password)
+    result = await this.runUpdateQuery(result)
+
+    // remove unnecessary fields from the reply
+    delete result.password
+    delete result.previous_login
+
     return result
   }
 
@@ -63,13 +69,10 @@ class LoginRoute extends ApiRoute {
               // credentials successfully verified!
               // generate a JWT, and add it to reply
               const jwtData = { id: user.id, email: user.email }
-              const duration = process.env.JWT_DEFAULT_DURATION || (60 * 60)
+              const duration = Number(process.env.JWT_DEFAULT_DURATION) || (60 * 60)
               const jwtOptions = { expiresIn: duration }
               const token = JWT.sign(jwtData, process.env.AUTH_SECRET_KEY, jwtOptions)
               user.token = token
-
-              // remove the password hash from the reply
-              delete user.password
 
               val = user
             }
@@ -81,6 +84,32 @@ class LoginRoute extends ApiRoute {
       })
 
     return val
+  }
+
+  /**
+   * Updates the current user record like so:
+   *  The value of previous_login is copied to last_login
+   *  The value of previous_login is set to now
+   *
+   * @param {*} user The data for the User who has successfully logged in.
+   */
+  async runUpdateQuery (user) {
+    const { id, email } = user
+    const updatedLastLogin = user.previous_login
+
+    await knex(this.db)
+      .where({ id, email })
+      .update({
+        last_login: updatedLastLogin,
+        previous_login: knex.raw('NOW()')
+      })
+      .then(() => {
+        // update the data we are sending back to client with the correct "last login" value
+        user.last_login = updatedLastLogin
+      })
+
+    // no need to return a real value here; it doesn't matter
+    return user
   }
 
   getValidators () {
