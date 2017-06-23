@@ -61,19 +61,13 @@ class LoginRoute extends ApiRoute {
             if (err) {
               // some unrelated error
               console.error(err)
-              val = Boom.notFound(apiErr.notFound(this.esourceName, email))
+              val = Boom.notFound(apiErr.notFound(this.resourceName, email))
             } else if (!match) {
               // non-matching username/password
               val = Boom.badRequest(apiErr.invalidLogin())
             } else {
-              // credentials successfully verified!
-              // generate a JWT, and add it to reply
-              const jwtData = { id: user.id, email: user.email }
-              const duration = Number(process.env.JWT_DEFAULT_DURATION) || (60 * 60)
-              const jwtOptions = { expiresIn: duration }
-              const token = JWT.sign(jwtData, process.env.AUTH_SECRET_KEY, jwtOptions)
-              user.token = token
-
+              // credentials successfully verified! generate a JWT, and add it to reply
+              user.token = helpers.buildJWT(user)
               val = user
             }
           })
