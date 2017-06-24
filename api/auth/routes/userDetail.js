@@ -7,7 +7,8 @@ const Boom = require('boom')
 const DB = require('../../../globals/constants').db
 const knex = require('../../../database/db')
 const apiErr = require('../../utils/apiErrors')
-const helpers = require('../../utils/routeHelpers')
+const globalHelpers = require('../../utils/routeHelpers')
+const helpers = require('../utils/authRouteHelpers')
 
 const params = {
   method: 'GET',
@@ -23,24 +24,36 @@ class UserDetailRoute extends ApiRoute {
 
   getHandler () {
     return (request, reply) => {
-      const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
+      const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
       const id = request.params.id
 
-      knex(this.db)
-        .select(this.getSelectParams())
-        .where({ 'id': ownerId })
-        .limit(1)
-        .then(result => {
-          if (!result.length) {
-            return reply(Boom.notFound(apiErr.notFound(this.resourceName, id)))
-          }
-          reply(result[0])
-        })
+      this.query(id, ownerId).then(res => reply(res))
     }
   }
 
+  async query (id, ownerId) {
+    let result = await this.runSelectQuery(id, ownerId)
+    return result
+  }
+
+  async runSelectQuery (id, ownerId) {
+    let val = Boom.notFound(apiErr.notFound(this.resourceName, id))
+
+    await knex(this.db)
+      .select(this.getSelectParams())
+      .where({ 'id': ownerId })
+      .limit(1)
+      .then(res => {
+        if (res.length) {
+          val = res[0]
+        }
+      })
+
+    return val
+  }
+
   getSelectParams () {
-    return ['id', 'email', 'created_at', 'updated_at', 'last_login']
+    return helpers.selectCols
   }
 }
 
