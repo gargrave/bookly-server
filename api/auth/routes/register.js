@@ -8,6 +8,7 @@ const JWT = require('jsonwebtoken')
 
 const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
+const env = require('../../../globals/env')
 const apiErr = require('../../utils/apiErrors')
 const validator = require('../utils/authValidator')
 
@@ -40,11 +41,15 @@ class RegisterRoute extends ApiCreateRoute {
                 user.token = token
                 reply(user)
               }, err => {
-                console.error(err)
-                reply(Boom.badRequest(apiErr.failedToCreate(this.resourceName)))
+                if (env.isDevEnv()) {
+                  console.error(err)
+                }
+                reply(Boom.badRequest(apiErr.userExists()))
               })
         }, err => {
-          console.error(err)
+          if (env.isDevEnv()) {
+            console.error(err)
+          }
           reply(Boom.badRequest(apiErr.failedToCreate(this.resourceName)))
         })
     }

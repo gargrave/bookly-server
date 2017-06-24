@@ -31,6 +31,10 @@ module.exports = {
 
   // invalid login attempt
   invalidLogin () {
-    return 'Could not login with the provided credentials.'
+    return 'Could not log in with the provided credentials.'
+  },
+
+  userExists () {
+    return 'Email is already in use by another user.'
   }
 }
