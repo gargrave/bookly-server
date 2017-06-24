@@ -7,6 +7,7 @@ const Boom = require('boom')
 
 const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
+const env = require('../../../globals/env')
 const apiErr = require('../../utils/apiErrors')
 const helpers = require('../utils/authRouteHelpers')
 const validator = require('../utils/authValidator')
@@ -64,7 +65,9 @@ class LoginRoute extends ApiRoute {
           Bcrypt.compare(submittedPassword, hashedPassword, function (err, match) {
             if (err) {
               // some unrelated error
-              console.error(err)
+              if (env.isDevEnv()) {
+                console.error(err)
+              }
               val = Boom.notFound(apiErr.notFound(this.resourceName, email))
             } else if (!match) {
               // non-matching username/password
@@ -78,7 +81,9 @@ class LoginRoute extends ApiRoute {
         }
       }, err => {
         // no need for anything special for an error here, as the Boom error will be returned by default
-        console.error(err)
+        if (env.isDevEnv()) {
+          console.error(err)
+        }
       })
 
     return val
