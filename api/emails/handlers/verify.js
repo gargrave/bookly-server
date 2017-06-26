@@ -34,11 +34,11 @@ async function createToken (config) {
 module.exports = {
   async send (mg, config) {
     // get the necessary token, by either finding an existing one or creating a new one
-    let asdf = await findExistingToken({ email: config.to })
-    if (!asdf) {
-      asdf = await createToken(config)
+    let tokenRecord = await findExistingToken({ email: config.to })
+    if (!tokenRecord) {
+      tokenRecord = await createToken(config)
     }
-    config.token = asdf.token
+    config.token = tokenRecord.token
 
     // send the email!
     const template = require('../templates/verify')
