@@ -8,6 +8,7 @@ const Boom = require('boom')
 const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
+const mailer = require('../../emails/mailer')
 const apiErr = require('../../utils/apiErrors')
 const helpers = require('../utils/authRouteHelpers')
 const validator = require('../utils/authValidator')
@@ -75,6 +76,7 @@ class RegisterRoute extends ApiCreateRoute {
         const user = res[0]
         user.token = helpers.buildJWT(user)
         val = user
+        mailer.sendVerifyAccount({ to: user.email })
       }, err => {
         if (env.isDevEnv()) {
           console.error(err)
