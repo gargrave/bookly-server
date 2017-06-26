@@ -9,6 +9,7 @@ module.exports = [
   './api/auth/routes/userDetail',
   './api/auth/routes/profileDetail',
   './api/auth/routes/verify-account',
+  './api/auth/routes/verify-resend',
 
   // Author routes
   './api/authors/routes/createAuthor',
