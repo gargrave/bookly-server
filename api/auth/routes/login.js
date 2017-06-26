@@ -11,7 +11,6 @@ const env = require('../../../globals/env')
 const apiErr = require('../../utils/apiErrors')
 const helpers = require('../utils/authRouteHelpers')
 const validator = require('../utils/authValidator')
-const mailer = require('../../emails/mailer')
 
 const params = {
   method: 'POST',
@@ -77,7 +76,6 @@ class LoginRoute extends ApiRoute {
               // credentials successfully verified! generate a JWT, and add it to reply
               user.token = helpers.buildJWT(user)
               val = user
-              mailer.sendVerifyAccount({ to: user.email })
             }
           })
         }

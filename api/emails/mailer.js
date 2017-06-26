@@ -5,6 +5,6 @@ const mg = require('mailgun-js')({
 
 module.exports = {
   sendVerifyAccount (config) {
-    // require('./handlers/verify').send(mg, config)
+    require('./handlers/verify').send(mg, config)
   }
 }
