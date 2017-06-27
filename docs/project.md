@@ -32,7 +32,11 @@ const envVars = {
 
   // optional
   CORS_WHITELIST: 'http://localhost:8080,https://mygreatwebsite.net',
-  JWT_DEFAULT_DURATION: jwtDuration
+  JWT_DEFAULT_DURATION: jwtDuration,
+
+  // mailgun config
+  MAILGUN_API_URL: '<mg-api-url>.mailgun.org',
+  MAILGUN_API_KEY: 'key-<whatever-your-api-key-might-be>'
 }
 
 for (let v in envVars) {
