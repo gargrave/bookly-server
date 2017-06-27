@@ -6,5 +6,9 @@ const mg = require('mailgun-js')({
 module.exports = {
   sendVerifyAccount (config) {
     require('./handlers/verify').send(mg, config)
+  },
+
+  sendPasswordReset (config) {
+    require('./handlers/pwreset-request').send(mg, config)
   }
 }

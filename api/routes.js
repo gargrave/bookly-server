@@ -10,6 +10,7 @@ module.exports = [
   './api/auth/routes/profileDetail',
   './api/auth/routes/verify-account',
   './api/auth/routes/verify-resend',
+  './api/auth/routes/pwreset-request',
 
   // Author routes
   './api/authors/routes/createAuthor',
