@@ -8,6 +8,7 @@ const DB = require('../../../globals/constants').db
 const knex = require('../../../database/db')
 const env = require('../../../globals/env')
 const mailer = require('../../emails/mailer')
+const apiErrors = require('../../utils/apiErrors')
 
 const params = {
   method: 'POST',
@@ -30,6 +31,8 @@ class VerifyResendRoute extends ApiRoute {
           if (canProceed === true) {
             mailer.sendVerifyAccount({ to })
             reply({ message: 'Verification email sent.' })
+          } else {
+            reply(Boom.notFound(apiErrors.notFound('user', to)))
           }
         })
       } else {
