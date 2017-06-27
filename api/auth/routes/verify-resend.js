@@ -24,14 +24,50 @@ class VerifyResendRoute extends ApiRoute {
 
   getHandler () {
     return (request, reply) => {
-      const to = request.payload.email
+      const to = request.payload.email // the "to" field for the email
       if (to) {
-        mailer.sendVerifyAccount({ to })
-        reply({ message: 'Email sent' })
+        this.confirmUserIsNotVerified(to).then(canProceed => {
+          if (canProceed === true) {
+            mailer.sendVerifyAccount({ to })
+            reply({ message: 'Verification email sent.' })
+          }
+        })
       } else {
         reply(Boom.notFound('No valid email address in request.'))
       }
     }
+  }
+
+  /**
+   * Confirms that the requested user's account is unverified. Returns true
+   * if User is NOT verified (i.e. if it is safe to send a verification email).
+   *
+   * Does this by running a SELECT query for the supplied email with "verified"
+   * status of false. If any records are found, we know it is okay to proceed.
+   *
+   * The front end SHOULDN'T let a request get here is the User is already verified,
+   * but this is just another check to prevent sending out an unnecessary verify link.
+   *
+   * @param {String} email The email address for the User to check.
+   */
+  async confirmUserIsNotVerified (email) {
+    let canProceed = false
+
+    try {
+      let where = { email, verified: false }
+      let foundUser = await knex(DB.USERS).where(where)
+      if (foundUser.length) {
+        canProceed = true
+      }
+    } catch (err) {
+      if (env.isDevEnv()) {
+        // there shouldn't be any errors here, so log it in dev mode
+        console.log('Error @ confirmUserIsNotVerified():')
+        console.dir(err)
+      }
+    }
+
+    return canProceed
   }
 }
 
