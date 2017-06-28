@@ -11,6 +11,7 @@ module.exports = [
   './api/auth/routes/verify-account',
   './api/auth/routes/verify-resend',
   './api/auth/routes/pwreset-request',
+  './api/auth/routes/pwreset-confirm',
 
   // Author routes
   './api/authors/routes/createAuthor',
