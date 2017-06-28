@@ -57,6 +57,10 @@ module.exports = {
     val.password
   )),
 
+  passwordResetRequest: Joi.object(Object.assign({},
+    val.email
+  )),
+
   passwordReset: Joi.object(Object.assign({},
     val.token,
     val.password,

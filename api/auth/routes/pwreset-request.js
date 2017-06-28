@@ -10,6 +10,7 @@ const env = require('../../../globals/env')
 const mailer = require('../../emails/mailer')
 const apiErrors = require('../../utils/apiErrors')
 const utils = require('../../utils/utils')
+const validator = require('../utils/authValidator')
 
 const params = {
   method: 'POST',
@@ -28,6 +29,10 @@ class PasswordResetRequestRoute extends ApiRoute {
     return (request, reply) => {
       this.query(request).then(res => reply(res))
     }
+  }
+
+  getValidators () {
+    return { payload: validator.passwordResetRequest }
   }
 
   async query (request, reply) {
