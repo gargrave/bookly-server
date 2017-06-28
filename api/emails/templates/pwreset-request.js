@@ -1,5 +1,5 @@
 const baseUrl = process.env.CLIENT_BASE_URL
-const url = `${baseUrl}/account/passwordreset/confim`
+const url = `${baseUrl}/account/passwordreset/confirm`
 
 module.exports = {
   subject (config) {
