@@ -73,7 +73,8 @@ class PasswordResetRequestRoute extends ApiRoute {
     try {
       record = await knex(DB.TOKENS_PASSWORD_RESET)
         .select('*')
-        .where({ token })
+        .whereRaw(`(now() - created_at) < '60 minutes'::interval`)
+        .andWhere({ token })
 
       if (!record.length) {
         throw Boom.notFound('Invalid password reset token.')
