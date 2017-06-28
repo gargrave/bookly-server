@@ -91,7 +91,7 @@ class RegisterRoute extends ApiCreateRoute {
   }
 
   getValidators () {
-    return { payload: validator.onRegister }
+    return { payload: validator.register }
   }
 }
 

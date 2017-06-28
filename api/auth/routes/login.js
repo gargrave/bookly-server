@@ -116,7 +116,7 @@ class LoginRoute extends ApiRoute {
   }
 
   getValidators () {
-    return { payload: validator.onLogin }
+    return { payload: validator.login }
   }
 }
 

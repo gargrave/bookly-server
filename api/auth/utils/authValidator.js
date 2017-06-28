@@ -2,83 +2,64 @@
 
 const Joi = require('joi')
 
-const baseValidator = {
+const val = {
   // email must be valid
-  email: Joi.string()
-    .trim()
-    .email()
-    .required(),
+  email: {
+    email: Joi.string()
+      .trim()
+      .email()
+      .required()
+  },
 
-  // password must be only alphanum with special chars
-  password: Joi.string()
-    .trim()
-    .regex(/^[\w\d!@#$%^&*_]+$/)
-    .min(6).max(72)
-    .required()
-    .options({
-      language: {
-        string: {
-          regex: { base: 'Password contains illegal characters.' }
+  // password must match length and regex
+  password: {
+    password: Joi.string()
+      .trim()
+      .regex(/^[\w\d!@#$%^&*_]+$/)
+      .min(8).max(72)
+      .required()
+      .options({
+        language: {
+          string: {
+            regex: { base: 'Password contains illegal characters.' }
+          }
         }
-      }
-    })
-}
+      })
+  },
 
-const emailVal = {
-  // email must be valid
-  email: Joi.string()
-    .trim()
-    .email()
-    .required()
-}
-
-const passwordVal = {
-  password: Joi.string()
-    .trim()
-    .regex(/^[\w\d!@#$%^&*_]+$/)
-    .min(8).max(72)
-    .required()
-    .options({
-      language: {
-        string: {
-          regex: { base: 'Password contains illegal characters.' }
-        }
-      }
-    })
-}
-
-const passwordConfirmVal = {
   // password confirm must match password
-  passwordConfirm: Joi.any()
-    .valid(Joi.ref('password'))
-    .required()
-    .options({
-      language: {
-        any: { allowOnly: 'Passwords do not match.' }
-      }
-    })
+  passwordConfirm: {
+    passwordConfirm: Joi.any()
+      .valid(Joi.ref('password'))
+      .required()
+      .options({
+        language: {
+          any: { allowOnly: 'Passwords do not match.' }
+        }
+      })
+  },
+
+  // token, for use in routes that require it (e.g. password reset)
+  token: {
+    token: Joi.string().required()
+  }
 }
 
 module.exports = {
-  onRegister: Joi.object(Object.assign({},
-    baseValidator, {
-      // password confirm must match password
-      passwordConfirm: Joi.any()
-        .valid(Joi.ref('password'))
-        .required()
-        .options({
-          language: {
-            any: { allowOnly: 'Passwords do not match.' }
-          }
-        })
-    })
-  ),
-
-  passwordReset: Joi.object(Object.assign({},
-    { token: Joi.string().required() },
-    passwordVal,
-    passwordConfirmVal
+  register: Joi.object(Object.assign({},
+    val.email,
+    val.password,
+    val.passwordConfirm
   )),
 
-  onLogin: Joi.object(baseValidator)
+  login: Joi.object(Object.assign({},
+    val.email,
+    val.password
+  )),
+
+  passwordReset: Joi.object(Object.assign({},
+    val.token,
+    val.password,
+    val.passwordConfirm
+  ))
 }
