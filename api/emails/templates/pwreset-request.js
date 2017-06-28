@@ -1,5 +1,5 @@
-const baseUrl = 'http://localhost:8080/#'
-const confirmUrl = `${baseUrl}/account/passwordreset/confim?token=`
+const baseUrl = process.env.CLIENT_BASE_URL
+const url = `${baseUrl}/account/passwordreset/confim`
 
 module.exports = {
   subject (config) {
@@ -9,14 +9,14 @@ module.exports = {
   text (config) {
     return `
     Use the following link to reset your password
-    ${confirmUrl}${config.token}
+    ${url}?token=${config.token}
     `
   },
 
   html (config) {
     return `
     <p>Use the following link to reset your password.</p>
-    <p><a>${confirmUrl}${config.token}</a></p>
+    <p><a>${url}?token=${config.token}</a></p>
     `
   }
 }
