@@ -5,8 +5,10 @@ const Boom = require('boom')
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
 const knex = require('../../../database/db')
+
 const apiErr = require('../../utils/apiErrors')
-const authHelpers = require('../utils/authRouteHelpers')
+
+const authHelpers = require('../utils/auth-helpers')
 
 const emptyProfile = (ownerId) => {
   return {

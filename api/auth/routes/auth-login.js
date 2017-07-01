@@ -7,10 +7,12 @@ const Boom = require('boom')
 
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
+
 const apiErr = require('../../utils/apiErrors')
-const helpers = require('../utils/authRouteHelpers')
-const authQueries = require('../utils/authQueries')
-const validator = require('../utils/authValidator')
+
+const authHelpers = require('../utils/auth-helpers')
+const authQueries = require('../utils/auth-queries')
+const validator = require('../utils/auth-validator')
 
 const params = {
   method: 'POST',
@@ -94,7 +96,7 @@ class LoginRoute extends ApiRoute {
             reject(Boom.badRequest(apiErr.invalidLogin()))
           } else {
             // credentials successfully verified! generate a JWT, and add it to reply
-            user.token = helpers.buildJWT(user)
+            user.token = authHelpers.buildJWT(user)
             resolve(user)
           }
         })

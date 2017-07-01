@@ -3,9 +3,11 @@
 const ApiRoute = require('../../generic-routes/basic')
 
 const DB = require('../../../globals/constants').db
+
 const globalHelpers = require('../../utils/routeHelpers')
-const authQueries = require('../utils/authQueries')
-const authHelpers = require('../utils/authRouteHelpers')
+
+const authHelpers = require('../utils/auth-helpers')
+const authQueries = require('../utils/auth-queries')
 
 const params = {
   method: 'GET',

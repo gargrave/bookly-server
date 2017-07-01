@@ -8,7 +8,8 @@ const Boom = require('boom')
 const DB = require('../../../globals/constants').db
 const knex = require('../../../database/db')
 const env = require('../../../globals/env')
-const validator = require('../utils/authValidator')
+
+const validator = require('../utils/auth-validator')
 
 const params = {
   method: 'POST',

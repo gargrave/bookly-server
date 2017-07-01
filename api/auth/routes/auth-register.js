@@ -6,10 +6,12 @@ const Bcrypt = require('bcrypt-nodejs')
 
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
+
 const mailer = require('../../emails/mailer')
-const authHelpers = require('../utils/authRouteHelpers')
-const queries = require('../utils/authQueries')
-const validator = require('../utils/authValidator')
+
+const authHelpers = require('../utils/auth-helpers')
+const authQueries = require('../utils/auth-queries')
+const validator = require('../utils/auth-validator')
 
 const params = {
   path: 'auth/register',
@@ -71,9 +73,9 @@ class RegisterRoute extends ApiCreateRoute {
    */
   async query (request, reply) {
     let userData = await this.buildPayload(request.payload)
-    let result = await queries.userCreate(userData)
+    let result = await authQueries.userCreate(userData)
     if (result.id) {
-      let profile = await queries.profileCreate(result.id)
+      let profile = await authQueries.profileCreate(result.id)
       result.profile = profile
       result.token = authHelpers.buildJWT(result)
       mailer.sendVerifyAccount({ to: result.email })

@@ -4,10 +4,9 @@ This is nothing more than a convenience to keep our main index.js file a little 
 */
 module.exports = [
   // Auth routes
-  './api/auth/routes/register',
-  './api/auth/routes/login',
-  './api/auth/routes/userDetail',
-  './api/auth/routes/profileDetail',
+  './api/auth/routes/auth-register',
+  './api/auth/routes/auth-login',
+  './api/auth/routes/user-detail',
   './api/auth/routes/verify-account',
   './api/auth/routes/verify-resend',
   './api/auth/routes/pwreset-request',
