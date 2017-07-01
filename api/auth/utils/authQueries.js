@@ -5,6 +5,7 @@ const Boom = require('boom')
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
 const knex = require('../../../database/db')
+const apiErr = require('../../utils/apiErrors')
 const authHelpers = require('../utils/authRouteHelpers')
 
 const emptyProfile = (ownerId) => {
@@ -16,6 +17,36 @@ const emptyProfile = (ownerId) => {
 }
 
 module.exports = {
+  /**
+   * Attempts to INSERT a new User record based oon the provided userPayload.
+   *
+   * 'userData' should be an object with the following data:
+   *    email - The User's email address
+   *    password - The HASHED version of the User's password (this will be written directly to DB)
+   *
+   * @param {*} userData The payload to add the User DB
+   */
+  async userCreate (userData) {
+    let res = Boom.badRequest(apiErr.userExists())
+
+    try {
+      const userRecord = await knex(DB.USERS)
+        .insert(userData)
+        .returning(authHelpers.selectCols)
+
+      if (userRecord.length) {
+        res = userRecord[0]
+      }
+    } catch (err) {
+      if (env.isDevEnv()) {
+        console.log('Error @ authQueries.userCreate():')
+        console.error(err)
+      }
+    }
+
+    return res
+  },
+
   /**
    * Attempts to SELECT and return the User associated with the provided owner ID.
    * If no Profile is found, a Boom error is returned.
@@ -49,7 +80,7 @@ module.exports = {
       }
     } catch (err) {
       if (env.isDevEnv()) {
-        console.log('Error @ userDetail.runSelectQuery():')
+        console.log('Error @ authQueries.userSelect():')
         console.error(err)
       }
     }
@@ -92,9 +123,24 @@ module.exports = {
    * @param {*} ownerId The ownerId to which this Profile should be linked
    */
   async profileCreate (ownerId) {
-    return knex(DB.PROFILES)
-      .insert(emptyProfile(ownerId))
-      .returning(authHelpers.profileSelectCols)
+    let res = Boom.badRequest(apiErr.failedToCreate('Profile'))
+
+    try {
+      const profileRecord = await knex(DB.PROFILES)
+        .insert(emptyProfile(ownerId))
+        .returning(authHelpers.profileSelectCols)
+
+      if (profileRecord.length) {
+        res = profileRecord[0]
+      }
+    } catch (err) {
+      if (env.isDevEnv()) {
+        console.log('Error @ authQueries.profileCreate():')
+        console.error(err)
+      }
+    }
+
+    return res
   },
 
   /**
@@ -112,14 +158,15 @@ module.exports = {
         .limit(1)
 
       // if User does not have a Profile for any reason, create an empty one
-      if (!profileRecord.length) {
-        profileRecord = await this.profileCreate(ownerId)
+      if (profileRecord.length) {
+        res = profileRecord[0]
+      } else {
+        res = await this.profileCreate(ownerId)
       }
       // return the first (and only) record as the reply
-      res = profileRecord[0]
     } catch (err) {
       if (env.isDevEnv()) {
-        console.log('Error @ authQueries.runSelectProfileQuery():')
+        console.log('Error @ authQueries.profileSelect():')
         console.error(err)
       }
     }

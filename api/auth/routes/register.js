@@ -3,14 +3,12 @@
 const ApiCreateRoute = require('../../generic-routes/create')
 
 const Bcrypt = require('bcrypt-nodejs')
-const Boom = require('boom')
 
-const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
 const mailer = require('../../emails/mailer')
-const apiErr = require('../../utils/apiErrors')
-const helpers = require('../utils/authRouteHelpers')
+const authHelpers = require('../utils/authRouteHelpers')
+const queries = require('../utils/authQueries')
 const validator = require('../utils/authValidator')
 
 const params = {
@@ -25,21 +23,23 @@ class RegisterRoute extends ApiCreateRoute {
     super(params)
   }
 
+  getSelectParams () {
+    return authHelpers.selectCols
+  }
+
+  getValidators () {
+    return { payload: validator.register }
+  }
+
   getHandler () {
     return (request, reply) => {
-      this.buildPayload(request.payload).then(data => {
-        this.query(data).then(res => reply(res))
-      }, err => {
-        if (env.isDevEnv()) {
-          console.error(err)
-        }
-        reply(Boom.badRequest(apiErr.failedToCreate(this.resourceName)))
-      })
+      this.query(request, reply).then(res => reply(res))
     }
   }
 
   /**
    * Override to do the following:
+   *    - User Bcrypt to hash the provided password
    *    - Replace original password with hashed version before it goes to DB
    *    - Remove the 'passwordConfirm' property, as it is no longer needed at this point
    */
@@ -60,38 +60,25 @@ class RegisterRoute extends ApiCreateRoute {
     })
   }
 
-  async query (data) {
-    let result = await this.runInsertQuery(data)
+  /**
+   * Runs the full process for creating a new User account. Assuming there is
+   * not already a User registered with the same email, this process goes like this:
+   *
+   *    1. Create a new User record with the provided data
+   *    2. Use the ID from this record to create a new Profile record, and attach it to the reply
+   *    3. Add an auth token to the reply (i.e. log the new user in immediately)
+   *    4. Send a verification email to the new User
+   */
+  async query (request, reply) {
+    let userData = await this.buildPayload(request.payload)
+    let result = await queries.userCreate(userData)
+    if (result.id) {
+      let profile = await queries.profileCreate(result.id)
+      result.profile = profile
+      result.token = authHelpers.buildJWT(result)
+      mailer.sendVerifyAccount({ to: result.email })
+    }
     return result
-  }
-
-  async runInsertQuery (data) {
-    let val = Boom.badRequest(apiErr.userExists())
-
-    await knex(this.db)
-      .insert(data)
-      .returning(this.getSelectParams())
-      .then(res => {
-        // generate a JWT, and add it to reply
-        const user = res[0]
-        user.token = helpers.buildJWT(user)
-        val = user
-        mailer.sendVerifyAccount({ to: user.email })
-      }, err => {
-        if (env.isDevEnv()) {
-          console.error(err)
-        }
-      })
-
-    return val
-  }
-
-  getSelectParams () {
-    return helpers.selectCols
-  }
-
-  getValidators () {
-    return { payload: validator.register }
   }
 }
 
