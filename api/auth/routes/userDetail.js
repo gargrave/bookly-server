@@ -5,6 +5,7 @@ const ApiRoute = require('../../generic-routes/basic')
 const Boom = require('boom')
 
 const DB = require('../../../globals/constants').db
+const env = require('../../../globals/env')
 const knex = require('../../../database/db')
 const apiErr = require('../../utils/apiErrors')
 const globalHelpers = require('../../utils/routeHelpers')
@@ -22,38 +23,39 @@ class UserDetailRoute extends ApiRoute {
     super(params)
   }
 
+  getSelectParams () {
+    return helpers.selectCols
+  }
+
   getHandler () {
     return (request, reply) => {
       const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
-      const id = request.params.id
-
-      this.query(id, ownerId).then(res => reply(res))
+      this.query(ownerId).then(res => reply(res))
     }
   }
 
-  async query (id, ownerId) {
-    let result = await this.runSelectQuery(id, ownerId)
+  async query (ownerId) {
+    let result = await this.runSelectQuery(ownerId)
     return result
   }
 
-  async runSelectQuery (id, ownerId) {
-    let val = Boom.notFound(apiErr.notFound(this.resourceName, id))
+  async runSelectQuery (ownerId) {
+    let res = Boom.notFound('No matching User found.')
 
-    await knex(this.db)
-      .select(this.getSelectParams())
-      .where({ 'id': ownerId })
-      .limit(1)
-      .then(res => {
-        if (res.length) {
-          val = res[0]
-        }
-      })
+    try {
+      const result = await knex(this.db)
+        .select(this.getSelectParams())
+        .where({ 'id': ownerId })
+        .limit(1)
+      res = result[0]
+    } catch (err) {
+      if (env.isDevEnv()) {
+        console.log('Error @ userDetail.runSelectQuery():')
+        console.dir(err)
+      }
+    }
 
-    return val
-  }
-
-  getSelectParams () {
-    return helpers.selectCols
+    return res
   }
 }
 
