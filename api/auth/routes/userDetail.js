@@ -2,14 +2,10 @@
 
 const ApiRoute = require('../../generic-routes/basic')
 
-const Boom = require('boom')
-
 const DB = require('../../../globals/constants').db
-const env = require('../../../globals/env')
-const knex = require('../../../database/db')
-const apiErr = require('../../utils/apiErrors')
 const globalHelpers = require('../../utils/routeHelpers')
-const helpers = require('../utils/authRouteHelpers')
+const authQueries = require('../utils/authQueries')
+const authHelpers = require('../utils/authRouteHelpers')
 
 const params = {
   method: 'GET',
@@ -24,38 +20,28 @@ class UserDetailRoute extends ApiRoute {
   }
 
   getSelectParams () {
-    return helpers.selectCols
+    return authHelpers.selectCols
   }
 
   getHandler () {
     return (request, reply) => {
-      const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
-      this.query(ownerId).then(res => reply(res))
+      this.query(request, reply).then(res => reply(res))
     }
   }
 
-  async query (ownerId) {
-    let result = await this.runSelectQuery(ownerId)
+  /**
+   * Attempts to SELECT the User record with associated owner id.
+   * Also attempts to SELECT the associated Profile and add it to the reply.
+   * @param {*} ownerId The owner ID of the User to find.
+   */
+  async query (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
+    let result = await authQueries.userSelect(ownerId)
+    let profile = await authQueries.profileSelect(ownerId)
+    if (profile.id) {
+      result.profile = profile
+    }
     return result
-  }
-
-  async runSelectQuery (ownerId) {
-    let res = Boom.notFound('No matching User found.')
-
-    try {
-      const result = await knex(this.db)
-        .select(this.getSelectParams())
-        .where({ 'id': ownerId })
-        .limit(1)
-      res = result[0]
-    } catch (err) {
-      if (env.isDevEnv()) {
-        console.log('Error @ userDetail.runSelectQuery():')
-        console.dir(err)
-      }
-    }
-
-    return res
   }
 }
 
