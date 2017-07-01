@@ -5,7 +5,6 @@ const ApiRoute = require('../../generic-routes/basic')
 const Bcrypt = require('bcrypt-nodejs')
 const Boom = require('boom')
 
-const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
 const apiErr = require('../../utils/apiErrors')
@@ -42,7 +41,8 @@ class LoginRoute extends ApiRoute {
     try {
       const email = request.payload.email.trim()
       const password = request.payload.password.trim()
-      let userRecord = await this.runSelectQuery(email, password)
+
+      let userRecord = await this.authenticateUser(email, password)
       // if the result has an 'id' property, it is a User
       // otherwise, it is a Boom error, and we should just return it as is
       if (userRecord.id) {
@@ -50,11 +50,17 @@ class LoginRoute extends ApiRoute {
         // remove unnecessary fields from the reply
         delete userRecord.password
         delete userRecord.previous_login
+
+        // now populate the Profile for the User
+        let profileRecord = await authQueries.profileSelect(userRecord.id)
+        if (profileRecord.id) {
+          userRecord.profile = profileRecord
+        }
       }
       res = userRecord
     } catch (err) {
       if (env.isDevEnv()) {
-        console.log('Error @ login.runSelectQuery():')
+        console.log('Error @ login.query():')
         console.error(err)
       }
       res = err
@@ -63,18 +69,23 @@ class LoginRoute extends ApiRoute {
     return res
   }
 
-  async runSelectQuery (email, password) {
+  /**
+   * Attempts to authenticate the User in two steps:
+   *    1. Run a SELECT query to find a User with the supplied email address
+   *    2. Assuming a User is found, validate the supplied password against the stored hashed version
+   *
+   * We are returning a promise here in order to be able to function correctly with bcrypt's callback structure.
+   */
+  async authenticateUser (email, password) {
     let user = await authQueries.userSelect({ email, includePassword: true })
-
-    // assuming we get a user object,
-    // compare its hashed password against the submitted password
     return new Promise((resolve, reject) => {
+      // assuming we get a user object, compare the passwords
       if (user.id) {
         Bcrypt.compare(password, user.password, function (err, match) {
           if (err) {
             // some unrelated error
             if (env.isDevEnv()) {
-              console.log('Error @ login.runSelectQuery():')
+              console.log('Error @ login.authenticateUser():')
               console.error(err)
             }
             reject(Boom.notFound(apiErr.notFound(this.resourceName, email)))
