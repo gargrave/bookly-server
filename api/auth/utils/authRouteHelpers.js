@@ -2,6 +2,7 @@ const JWT = require('jsonwebtoken')
 
 module.exports = {
   selectCols: ['id', 'email', 'created_at', 'updated_at', 'last_login', 'verified'],
+  profileSelectCols: ['id', 'first_name', 'last_name', 'created_at', 'updated_at'],
 
   /**
    * Builds a JWT based on the provided user data
