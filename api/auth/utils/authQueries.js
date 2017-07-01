@@ -19,28 +19,72 @@ module.exports = {
   /**
    * Attempts to SELECT and return the User associated with the provided owner ID.
    * If no Profile is found, a Boom error is returned.
-   * @param {*} ownerId The ownerId to which this Profile should be linked
    */
-  async userSelect (ownerId) {
+  async userSelect ({ id, email, includePassword }) {
     let res = Boom.notFound('No matching User found.')
+
+    // build the SELECT clause based on whether the password hash should be included
+    let select = authHelpers.selectCols
+    if (includePassword === true) {
+      select.push('password')
+    }
+
+    // build the WHERE clause based on received args
+    let where = {}
+    if (id) {
+      where.id = id
+    }
+    if (email) {
+      where.email = email
+    }
 
     try {
       const userRecord = await knex(DB.USERS)
-        .select(authHelpers.selectCols)
-        .where({ 'id': ownerId })
+        .select(select)
+        .where(where)
         .limit(1)
-
+      // if we have a record, use that for the return value
       if (userRecord.length) {
         res = userRecord[0]
       }
     } catch (err) {
       if (env.isDevEnv()) {
         console.log('Error @ userDetail.runSelectQuery():')
-        console.dir(err)
+        console.error(err)
       }
     }
 
     return res
+  },
+
+  /**
+   * Updates the current user record like so:
+   *  The value of previous_login is copied to last_login
+   *  The value of previous_login is set to now
+   *
+   * @param {*} user The data for the User who has successfully logged in.
+   */
+  async userUpdate (user) {
+    const where = { id: user.id, email: user.email }
+    const updatedLastLogin = user.previous_login
+
+    try {
+      await knex(DB.USERS)
+        .where(where)
+        .update({
+          last_login: updatedLastLogin,
+          previous_login: knex.raw('NOW()')
+        })
+      // update the data we are sending back to client with the correct "last login" value
+      user.last_login = updatedLastLogin
+    } catch (err) {
+      if (env.isDevEnv()) {
+        console.log('err:')
+        console.error(err)
+      }
+    }
+    // return the UPDATED version of the user data
+    return user
   },
 
   /**
@@ -76,7 +120,7 @@ module.exports = {
     } catch (err) {
       if (env.isDevEnv()) {
         console.log('Error @ authQueries.runSelectProfileQuery():')
-        console.dir(err)
+        console.error(err)
       }
     }
 

@@ -10,6 +10,7 @@ const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
 const apiErr = require('../../utils/apiErrors')
 const helpers = require('../utils/authRouteHelpers')
+const authQueries = require('../utils/authQueries')
 const validator = require('../utils/authValidator')
 
 const params = {
@@ -25,98 +26,72 @@ class LoginRoute extends ApiRoute {
     super(params)
   }
 
+  getValidators () {
+    return { payload: validator.login }
+  }
+
   getHandler () {
     return (request, reply) => {
-      const email = request.payload.email.trim()
-      const password = request.payload.password.trim()
-
-      this.query(email, password).then(res => reply(res))
+      this.query(request, reply).then(res => reply(res))
     }
   }
 
-  async query (email, password) {
-    let result = await this.runSelectQuery(email, password)
+  async query (request, reply) {
+    let res = Boom.badRequest(apiErr.invalidLogin())
 
-    // if the result has an 'id' property, it is a User
-    // otherwise, it is a Boom error, and we should just return it as is
-    if (result.id) {
-      result = await this.runUpdateQuery(result)
-      // remove unnecessary fields from the reply
-      delete result.password
-      delete result.previous_login
+    try {
+      const email = request.payload.email.trim()
+      const password = request.payload.password.trim()
+      let userRecord = await this.runSelectQuery(email, password)
+      // if the result has an 'id' property, it is a User
+      // otherwise, it is a Boom error, and we should just return it as is
+      if (userRecord.id) {
+        userRecord = await authQueries.userUpdate(userRecord)
+        // remove unnecessary fields from the reply
+        delete userRecord.password
+        delete userRecord.previous_login
+      }
+      res = userRecord
+    } catch (err) {
+      if (env.isDevEnv()) {
+        console.log('Error @ login.runSelectQuery():')
+        console.error(err)
+      }
+      res = err
     }
 
-    return result
+    return res
   }
 
   async runSelectQuery (email, password) {
-    let val = Boom.badRequest(apiErr.invalidLogin())
+    let user = await authQueries.userSelect({ email, includePassword: true })
 
-    await knex(this.db)
-      .select()
-      .where({ email })
-      .limit(1)
-      .then(res => {
-        if (res.length) {
-          const user = res[0]
-          const submittedPassword = password
-          const hashedPassword = user.password
-
-          Bcrypt.compare(submittedPassword, hashedPassword, function (err, match) {
-            if (err) {
-              // some unrelated error
-              if (env.isDevEnv()) {
-                console.error(err)
-              }
-              val = Boom.notFound(apiErr.notFound(this.resourceName, email))
-            } else if (!match) {
-              // non-matching username/password
-              val = Boom.badRequest(apiErr.invalidLogin())
-            } else {
-              // credentials successfully verified! generate a JWT, and add it to reply
-              user.token = helpers.buildJWT(user)
-              val = user
+    // assuming we get a user object,
+    // compare its hashed password against the submitted password
+    return new Promise((resolve, reject) => {
+      if (user.id) {
+        Bcrypt.compare(password, user.password, function (err, match) {
+          if (err) {
+            // some unrelated error
+            if (env.isDevEnv()) {
+              console.log('Error @ login.runSelectQuery():')
+              console.error(err)
             }
-          })
-        }
-      }, err => {
-        // no need for anything special for an error here, as the Boom error will be returned by default
-        if (env.isDevEnv()) {
-          console.error(err)
-        }
-      })
-
-    return val
-  }
-
-  /**
-   * Updates the current user record like so:
-   *  The value of previous_login is copied to last_login
-   *  The value of previous_login is set to now
-   *
-   * @param {*} user The data for the User who has successfully logged in.
-   */
-  async runUpdateQuery (user) {
-    const { id, email } = user
-    const updatedLastLogin = user.previous_login
-
-    await knex(this.db)
-      .where({ id, email })
-      .update({
-        last_login: updatedLastLogin,
-        previous_login: knex.raw('NOW()')
-      })
-      .then(() => {
-        // update the data we are sending back to client with the correct "last login" value
-        user.last_login = updatedLastLogin
-      })
-
-    // no need to return a real value here; it doesn't matter
-    return user
-  }
-
-  getValidators () {
-    return { payload: validator.login }
+            reject(Boom.notFound(apiErr.notFound(this.resourceName, email)))
+          } else if (!match) {
+            // non-matching username/password
+            reject(Boom.badRequest(apiErr.invalidLogin()))
+          } else {
+            // credentials successfully verified! generate a JWT, and add it to reply
+            user.token = helpers.buildJWT(user)
+            resolve(user)
+          }
+        })
+      } else {
+        // if we did not get a user, we got an error. so return that instead
+        reject(Boom.badRequest(apiErr.invalidLogin()))
+      }
+    })
   }
 }
 

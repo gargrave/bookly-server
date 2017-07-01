@@ -36,12 +36,13 @@ class UserDetailRoute extends ApiRoute {
    */
   async query (request, reply) {
     const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
-    let result = await authQueries.userSelect(ownerId)
-    let profile = await authQueries.profileSelect(ownerId)
-    if (profile.id) {
-      result.profile = profile
+
+    let userRecord = await authQueries.userSelect({ id: ownerId })
+    let profileRecord = await authQueries.profileSelect(ownerId)
+    if (profileRecord.id) {
+      userRecord.profile = profileRecord
     }
-    return result
+    return userRecord
   }
 }
 
