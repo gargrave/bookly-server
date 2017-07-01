@@ -45,5 +45,10 @@ module.exports = {
     mg.messages().send(helpers.buildEmail(config, template), (err, body) => {
       helpers.showResults('verify', err, body)
     })
+  },
+
+  async dump (config) {
+    const template = require('../templates/verify')
+    console.log(template.html(config))
   }
 }

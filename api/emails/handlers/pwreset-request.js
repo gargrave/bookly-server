@@ -6,5 +6,10 @@ module.exports = {
     mg.messages().send(helpers.buildEmail(config, template), (err, body) => {
       helpers.showResults('verify', err, body)
     })
+  },
+
+  async dump (config) {
+    const template = require('../templates/pwreset-request')
+    console.log(template.html(config))
   }
 }
