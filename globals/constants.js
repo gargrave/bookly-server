@@ -1,6 +1,6 @@
 exports.db = {
   USERS: 'Users',
-  PROFILES: 'Profiles',
+  PROFILES: 'profiles',
   AUTHORS: 'Authors',
   BOOKS: 'Books',
   TOKENS_VERIFY: 'tokens_verify',
