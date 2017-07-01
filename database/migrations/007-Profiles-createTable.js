@@ -5,8 +5,8 @@ exports.up = function (knex, Promise) {
     table.increments('id')
 
     // ownerId as foreign key to Users table
-    table.integer('ownerId').notNullable()
-    table.foreign('ownerId')
+    table.integer('owner_id').notNullable()
+    table.foreign('owner_id')
       .references(`${DB.USERS}.id`)
       .onDelete('CASCADE')
 
