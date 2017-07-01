@@ -34,7 +34,7 @@ module.exports = {
     try {
       const userRecord = await knex(DB.USERS)
         .insert(userData)
-        .returning(authHelpers.selectCols)
+        .returning(authHelpers.userSelectCols)
 
       if (userRecord.length) {
         res = userRecord[0]
@@ -57,7 +57,7 @@ module.exports = {
     let res = Boom.notFound('No matching User found.')
 
     // build the SELECT clause based on whether the password hash should be included
-    let select = authHelpers.selectCols
+    let select = [...authHelpers.userSelectCols]
     if (includePassword === true) {
       select.push('password')
     }
