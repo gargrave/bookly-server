@@ -6,11 +6,12 @@ module.exports = [
   // Auth routes
   './api/auth/routes/auth-register',
   './api/auth/routes/auth-login',
+  './api/auth/routes/profile-update',
+  './api/auth/routes/pwreset-confirm',
+  './api/auth/routes/pwreset-request',
   './api/auth/routes/user-detail',
   './api/auth/routes/verify-account',
   './api/auth/routes/verify-resend',
-  './api/auth/routes/pwreset-request',
-  './api/auth/routes/pwreset-confirm',
 
   // Author routes
   './api/authors/routes/createAuthor',

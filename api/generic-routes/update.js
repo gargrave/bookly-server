@@ -37,7 +37,7 @@ class ApiUpdateRoute extends ApiRoute {
   /**
    * Override to do the following:
    *    - Update the 'updated_at' prop to use NOW()
-  */
+   */
   buildPayload (payload) {
     return new Promise((resolve, reject) => {
       resolve(Object.assign(
