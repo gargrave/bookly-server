@@ -22,7 +22,7 @@ class UserDetailRoute extends ApiRoute {
   }
 
   getSelectParams () {
-    return authHelpers.selectCols
+    return authHelpers.userSelectCols
   }
 
   getHandler () {

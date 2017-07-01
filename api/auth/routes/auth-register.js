@@ -26,7 +26,7 @@ class RegisterRoute extends ApiCreateRoute {
   }
 
   getSelectParams () {
-    return authHelpers.selectCols
+    return authHelpers.userSelectCols
   }
 
   getValidators () {
