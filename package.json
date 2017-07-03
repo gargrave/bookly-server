@@ -20,6 +20,7 @@
   "author": "Gabe Hargrave <gkhargrave@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.16.2",
     "bcrypt-nodejs": "0.0.3",
     "blipp": "^2.3.0",
     "boom": "^5.1.0",
