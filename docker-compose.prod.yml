@@ -1,8 +1,0 @@
-version: '2'
-services:
-  node:
-    command: npm run prod
-    ports:
-      - "3001:3001"
-    environment:
-      NODE_ENV: 'prod'
