@@ -8,8 +8,8 @@ module.exports = {
   },
 
   selectCols: [
-    'Books.id', 'Books.title', 'Books.created_at', 'Books.updated_at',
-    'Books.authorId', 'Authors.firstName', 'Authors.lastName'
+    `${DB.BOOKS}.id`, `${DB.BOOKS}.title`, `${DB.BOOKS}.created_at`, `${DB.BOOKS}.updated_at`,
+    `${DB.BOOKS}.authorId`, `${DB.AUTHORS}.firstName`, `${DB.AUTHORS}.lastName`
   ],
 
   populateAuthor: function (bookQueryResult) {
