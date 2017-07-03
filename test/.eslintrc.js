@@ -5,5 +5,5 @@ module.exports = {
     expect: true,
     experiment: true,
     it: true
-  },
+  }
 }
