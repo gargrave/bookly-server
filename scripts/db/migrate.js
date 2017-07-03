@@ -1,4 +1,5 @@
 const knex = require('../../database/db')
+const log = require('../../globals/logger').verboseLog
 
 const config = {
   directory: './database/migrations/',
@@ -7,11 +8,11 @@ const config = {
 
 knex.migrate.latest(config)
   .then(res => {
-    console.log('DB migration successful!')
+    log('DB migration successful!')
     process.exit(0)
   })
   .catch(err => {
-    console.log('DB migration error!')
+    log('DB migration error!')
     console.log(err)
     process.exit(1)
   })
