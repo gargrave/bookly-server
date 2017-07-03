@@ -3,7 +3,7 @@
 const Hapi = require('hapi')
 const Blipp = require('blipp')
 
-const server = new Hapi.Server()
+const server = module.exports = new Hapi.Server()
 
 const config = require('./config')
 const routes = require('./api/routes')
@@ -33,11 +33,13 @@ server.register(require('hapi-auth-jwt2'), (err) => {
   routes.forEach(r => server.route(require(r)))
 })
 
-server.register({ register: Blipp, options: {} }, (err) => {
-  if (err) {
-    console.log('Error loading Blipp: ' + err)
-  }
-})
+if (process.env.NODE_ENV !== 'test') {
+  server.register({ register: Blipp, options: {} }, (err) => {
+    if (err) {
+      console.log('Error loading Blipp: ' + err)
+    }
+  })
+}
 
 server.start(err => {
   if (err) {
