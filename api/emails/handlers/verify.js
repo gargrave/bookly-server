@@ -48,6 +48,12 @@ module.exports = {
   },
 
   async dump (config) {
+    let tokenRecord = await findExistingToken({ email: config.to })
+    if (!tokenRecord) {
+      tokenRecord = await createToken(config)
+    }
+    config.token = tokenRecord.token
+
     const template = require('../templates/verify')
     console.log(template.html(config))
   }
