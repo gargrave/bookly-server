@@ -1,8 +1,8 @@
 exports.db = {
-  USERS: 'Users',
+  USERS: 'users',
   PROFILES: 'profiles',
-  AUTHORS: 'Authors',
-  BOOKS: 'Books',
+  AUTHORS: 'authors',
+  BOOKS: 'books',
   TOKENS_VERIFY: 'tokens_verify',
   TOKENS_PASSWORD_RESET: 'tokens_password_reset'
 }
