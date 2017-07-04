@@ -54,12 +54,13 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
       })
     })
 
-    it('should a list of Authors if proper authentication is provided', (done) => {
+    it('should provide an Array of Authors if proper authentication is provided', (done) => {
       let authors = response
       let author = authors[0]
 
       expect(authors).to.be.an.array()
       expect(authors.length > 0).to.be.true()
+
       expect(author.id).to.not.be.undefined()
       expect(author.firstName).to.not.be.undefined()
       expect(author.lastName).to.not.be.undefined()
