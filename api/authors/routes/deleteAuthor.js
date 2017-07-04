@@ -2,15 +2,15 @@
 
 const ApiDeleteRoute = require('../../generic-routes/delete')
 
-const helpers = require('../utils/authorRouteHelpers')
+const authorHelpers = require('../utils/authorRouteHelpers')
 
 class AuthorDeleteRoute extends ApiDeleteRoute {
   constructor () {
-    super(helpers.params)
+    super(authorHelpers.params)
   }
 
   getSelectParams () {
-    return helpers.selectCols
+    return authorHelpers.selectCols
   }
 }
 

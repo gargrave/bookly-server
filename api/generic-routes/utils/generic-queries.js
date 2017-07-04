@@ -11,10 +11,7 @@ module.exports = {
   async selectOne ({ ownerId, recordId, selectCols, dbName, resourceName = 'Record' }) {
     let res = Boom.badRequest(apiErr.notFound(resourceName, recordId))
 
-    const where = {
-      owner_id: ownerId,
-      id: recordId
-    }
+    const where = { owner_id: ownerId, id: recordId }
 
     try {
       const result = await knex(dbName)
@@ -51,6 +48,27 @@ module.exports = {
       if (msg.indexOf('violates unique constraint') !== -1) {
         res = Boom.badRequest(apiErr.matchingRecord(resourceName))
       }
+    }
+
+    return res
+  },
+
+  async delete ({ ownerId, recordId, dbName, resourceName }) {
+    let res = Boom.badRequest(apiErr.failedToDelete(resourceName))
+
+    const where = { owner_id: ownerId, id: recordId }
+
+    try {
+      const result = await knex(dbName)
+        .where(where)
+        .del()
+
+      // DELETE query will return number of rows deleted
+      if (result === 1) {
+        res = null
+      }
+    } catch (err) {
+      env.error(err, 'genericQueries.create()')
     }
 
     return res

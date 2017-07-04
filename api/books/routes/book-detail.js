@@ -26,11 +26,11 @@ class BookDetailRoute extends ApiDetailRoute {
     const ownerId = globalHelpers.getOwnerIdOrDieTrying(request)
     const queryParams = {
       ownerId,
-      bookId: request.params.id,
+      recordId: request.params.id,
       selectCols: this.getSelectParams()
     }
-    const result = await bookQueries.selectBookAndJoinAuthor(queryParams)
-    return bookHelpers.populateAuthor(result)
+    const result = await bookQueries.selectBookAndPopulateAuthor(queryParams)
+    return result
   }
 }
 

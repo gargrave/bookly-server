@@ -2,11 +2,9 @@
 
 const ApiRoute = require('./basic')
 
-const Boom = require('boom')
+const globalHelpers = require('../utils/routeHelpers')
 
-const knex = require('../../database/db')
-const apiErr = require('../utils/apiErrors')
-const helpers = require('../utils/routeHelpers')
+const queries = require('./utils/generic-queries')
 
 class ApiDeleteRoute extends ApiRoute {
   constructor ({ path, auth, db, resourceName }) {
@@ -21,71 +19,52 @@ class ApiDeleteRoute extends ApiRoute {
 
   getHandler () {
     return (request, reply) => {
-      const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
-      const id = request.params.id
-
-      this.query(id, ownerId).then(res => reply(res))
+      this.query(request, reply).then(res => reply(res))
     }
   }
 
   /**
-   * Runs all necessary queries and returns either error or data.
-   *
-   * @param {*} id The ID nubmer of the record to delete
-   * @param {*} ownerId The owner ID of the user making the request
+   * Returns the query to use for SELECT before the DELETE query is run.
+   * By default, this simply returns the generic "SELECT one" query, but it
+   * can be overridden by a child class if it needs to provide a customized version.
    */
-  async query (id, ownerId) {
-    let sel = await this.runSelectQuery({ id, owner_id: ownerId })
-    let del = await this.runDeleteQuery({ id, owner_id: ownerId })
+  getSelectQuery (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
+    const recordId = request.params.id
+    const params = {
+      ownerId,
+      recordId,
+      dbName: this.db,
+      resourceName: this.resourceName,
+      selectCols: this.getSelectParams()
+    }
+
+    return queries.selectOne(params)
+  }
+
+  /**
+   * Returns the query to use for the DELETE operate.
+   * By default, this simply returns the generic "DELETE" query, but it
+   * can be overridden by a child class if it needs to provide a customized version.
+   */
+  getDeleteQuery (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
+    const recordId = request.params.id
+    const params = {
+      ownerId,
+      recordId,
+      dbName: this.db,
+      resourceName: this.resourceName
+    }
+
+    return queries.delete(params)
+  }
+
+  async query (request, reply) {
+    const selectResult = await this.getSelectQuery(request, reply)
+    const deleteResult = await this.getDeleteQuery(request, reply)
     // if we get nothing back from del(), everything went okay
-    return del !== undefined ? del : sel
-  }
-
-  /**
-   * Runs a SELECT query before the resource is deleted. This way we can
-   * have the original data to return AFTER it has been deleted.
-   *
-   * @param {Object} where The data to use for the WHERE clause
-   */
-  async runSelectQuery (where) {
-    let val = Boom.notFound(apiErr.notFound(this.resourceName, where.id))
-
-    await knex(this.db)
-      .select(this.getSelectParams())
-      .where(where)
-      .limit(1)
-      .then(res => {
-        if (res.length) {
-          val = res[0]
-        }
-      })
-
-    return val
-  }
-
-  /**
-   * Runs the DELETE query on the database.
-   *
-   * If any errors are encountered, it will return an appropriate error message;
-   *    otherwise it will simply return undefined.
-   *
-   * @param {Object} where The data to use for the WHERE clause
-   */
-  async runDeleteQuery (where) {
-    let val
-
-    await knex(this.db)
-      .where(where)
-      .del()
-      .then(() => {
-        // if the query is successful, we don't need to do anything here
-      }, err => {
-        // if we get an error, use that for the return value
-        console.error(err)
-        val = Boom.badRequest(apiErr.failedToDelete(this.resourceName))
-      })
-
-    return val
+    return deleteResult !== null ? deleteResult : selectResult
   }
 }
 

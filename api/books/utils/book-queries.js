@@ -53,15 +53,15 @@ module.exports = {
   },
 
   /**
-   * Attempts to SELECT the book specified by bookId, and INNER JOIN the Author
+   * Attempts to SELECT the book specified by recordId, and INNER JOIN the Author
    * specified by the Book's 'author_id' field.
    */
-  async selectBookAndJoinAuthor ({ ownerId, bookId, selectCols }) {
-    let res = Boom.badRequest(apiErr.notFound(resourceName, bookId))
+  async selectBookAndPopulateAuthor ({ ownerId, recordId, selectCols }) {
+    let res = Boom.badRequest(apiErr.notFound(resourceName, recordId))
 
     const where = {
       [`${DB.BOOKS}.owner_id`]: ownerId,
-      [`${DB.BOOKS}.id`]: bookId
+      [`${DB.BOOKS}.id`]: recordId
     }
 
     try {
@@ -72,7 +72,7 @@ module.exports = {
         .limit(1)
 
       if (bookRecord.length) {
-        res = bookRecord[0]
+        res = bookHelpers.populateAuthor(bookRecord[0])
       }
     } catch (err) {
       env.error(err, 'bookQueries.createBook()')

@@ -2,46 +2,33 @@
 
 const ApiDeleteRoute = require('../../generic-routes/delete')
 
-const Boom = require('boom')
-
-const knex = require('../../../database/db')
-const DB = require('../../../globals/constants').db
-
-const apiErr = require('../../utils/apiErrors')
+const globalHelpers = require('../../utils/routeHelpers')
 
 const bookHelpers = require('../utils/book-helpers')
+const bookQueries = require('../utils/book-queries')
 
 class BookDeleteRoute extends ApiDeleteRoute {
   constructor () {
     super(bookHelpers.params)
   }
 
-  /**
-   * Override to populate the 'author' prop in a more readable way.
-   */
-  async runSelectQuery (where) {
-    let { id, ownerId } = where
-    let val = Boom.notFound(apiErr.notFound(this.resourceName, id))
-
-    await knex(this.db)
-      .select(this.getSelectParams())
-      .innerJoin(DB.AUTHORS, `${DB.BOOKS}.authorId`, `${DB.AUTHORS}.id`)
-      .where({
-        [`${DB.BOOKS}.ownerId`]: ownerId,
-        [`${DB.BOOKS}.id`]: id
-      })
-      .limit(1)
-      .then(res => {
-        if (res.length) {
-          val = bookHelpers.populateAuthor(res[0])
-        }
-      })
-
-    return val
-  }
-
   getSelectParams () {
     return bookHelpers.selectCols
+  }
+
+  /**
+   * Override to use the custom Book SELECT method to run populate the Author.
+   */
+  async getSelectQuery (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
+    const recordId = request.params.id
+    const params = {
+      ownerId,
+      recordId,
+      selectCols: this.getSelectParams()
+    }
+
+    return bookQueries.selectBookAndPopulateAuthor(params)
   }
 }
 
