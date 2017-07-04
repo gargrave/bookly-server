@@ -8,6 +8,30 @@ const knex = require('../../../database/db')
 const apiErr = require('../../utils/apiErrors')
 
 module.exports = {
+  async selectOne ({ ownerId, recordId, selectCols, dbName, resourceName = 'Record' }) {
+    let res = Boom.badRequest(apiErr.notFound(resourceName, recordId))
+
+    const where = {
+      owner_id: ownerId,
+      id: recordId
+    }
+
+    try {
+      const result = await knex(dbName)
+        .select(selectCols)
+        .where(where)
+        .limit(1)
+
+      if (result.length) {
+        res = result[0]
+      }
+    } catch (err) {
+      env.error(err, 'genericQueries.select()')
+    }
+
+    return res
+  },
+
   async create ({ data, returning, dbName, resourceName = 'Record' }) {
     let res = Boom.badRequest(apiErr.failedToCreate(resourceName))
 
