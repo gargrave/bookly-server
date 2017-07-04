@@ -43,7 +43,7 @@ class ApiDeleteRoute extends ApiRoute {
   }
 
   /**
-   * Returns the query to use for the DELETE operate.
+   * Returns the query to use for the DELETE operation.
    * By default, this simply returns the generic "DELETE" query, but it
    * can be overridden by a child class if it needs to provide a customized version.
    */

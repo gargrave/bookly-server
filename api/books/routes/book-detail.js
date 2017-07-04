@@ -22,15 +22,19 @@ class BookDetailRoute extends ApiDetailRoute {
     }
   }
 
-  async query (request, reply) {
+  /**
+   * Override to use custom Book SELECT query to populate Author.
+   * @param {*} request
+   * @param {*} reply
+   */
+  async getSelectQuery (request, reply) {
     const ownerId = globalHelpers.getOwnerIdOrDieTrying(request)
     const queryParams = {
       ownerId,
       recordId: request.params.id,
       selectCols: this.getSelectParams()
     }
-    const result = await bookQueries.selectBookAndPopulateAuthor(queryParams)
-    return result
+    return bookQueries.selectBookAndPopulateAuthor(queryParams)
   }
 }
 

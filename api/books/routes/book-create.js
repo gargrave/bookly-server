@@ -37,13 +37,15 @@ class BookCreateRoute extends ApiCreateRoute {
     }
   }
 
-  async query (request, reply) {
+  /**
+   * Override to use custom Book CREATE query.
+   */
+  async getCreateQuery (request, reply) {
     const queryParams = {
       payload: await this.buildPayload(request.payload),
       returning: this.getSelectParams()
     }
-    const result = await bookQueries.createBook(queryParams)
-    return result
+    return bookQueries.createBook(queryParams)
   }
 }
 
