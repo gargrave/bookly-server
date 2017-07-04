@@ -21,14 +21,24 @@ class ApiCreateRoute extends ApiRoute {
     }
   }
 
-  async query (request, reply) {
-    const queryParams = {
-      data: await this.buildPayload(request.payload),
+  /**
+   * Returns the query to use for the CREATE operation.
+   * By default, this simply returns the generic "CREATE" query, but it
+   * can be overridden by a child class if it needs to provide a customized version.
+   */
+  async getCreateQuery (request, reply) {
+    const data = await this.buildPayload(request.payload)
+    const params = {
+      data,
       returning: this.getSelectParams(),
       dbName: this.db,
       resourceName: this.resourceName
     }
-    const result = await queries.create(queryParams)
+    return queries.create(params)
+  }
+
+  async query (request, reply) {
+    const result = await this.getCreateQuery(request, reply)
     return result
   }
 }
