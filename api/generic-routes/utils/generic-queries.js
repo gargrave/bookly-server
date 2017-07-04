@@ -39,9 +39,7 @@ module.exports = {
         .select(selectCols)
         .where(where)
 
-      if (records.length) {
-        res = records
-      }
+      res = records
     } catch (err) {
       env.error(err, 'genericQueries.selectAll()')
     }

@@ -62,11 +62,29 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
       expect(authors.length > 0).to.be.true()
 
       expect(author.id).to.not.be.undefined()
-      expect(author.firstName).to.not.be.undefined()
-      expect(author.lastName).to.not.be.undefined()
+      expect(author.first_name).to.not.be.undefined()
+      expect(author.last_name).to.not.be.undefined()
       expect(author.created_at).to.not.be.undefined()
       expect(author.updated_at).to.not.be.undefined()
 
+      done()
+    })
+  })
+
+  describe('Authenticated ->', () => {
+    before((done) => {
+      login().then(token => {
+        let request = apiHelper.axGet(authorsUrl, token)
+        // send the HTTP request
+        testHttp(request).then(res => {
+          response = res.data
+          done()
+        })
+      })
+    })
+
+    it('should provide an empty Array if the User has not authors', (done) => {
+      expect(true).to.be.false()
       done()
     })
   })

@@ -127,6 +127,8 @@ module.exports = {
         } else {
           res = bookHelpers.populateAuthor(bookRecords)
         }
+      } else {
+        res = []
       }
     } catch (err) {
       env.error(err, 'bookQueries.createBook()')

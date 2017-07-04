@@ -1,14 +1,14 @@
 'use strict'
 
 let data = [
-  { ownerId: 1, firstName: 'Kurt', lastName: 'Vonnegut' },
-  { ownerId: 1, firstName: 'Chuck', lastName: 'Palahniuk' },
-  { ownerId: 1, firstName: 'Tom', lastName: 'Robbins' },
+  { owner_id: 1, first_name: 'Kurt', last_name: 'Vonnegut' },
+  { owner_id: 1, first_name: 'Chuck', last_name: 'Palahniuk' },
+  { owner_id: 1, first_name: 'Tom', last_name: 'Robbins' },
 
-  { ownerId: 2, firstName: 'Bill', lastName: 'Bryson' },
-  { ownerId: 2, firstName: 'Aldous', lastName: 'Huxley' },
-  { ownerId: 2, firstName: 'J. D.', lastName: 'Salinger' },
-  { ownerId: 2, firstName: 'Franz', lastName: 'Kafka' }
+  { owner_id: 2, first_name: 'Bill', last_name: 'Bryson' },
+  { owner_id: 2, first_name: 'Aldous', last_name: 'Huxley' },
+  { owner_id: 2, first_name: 'J. D.', last_name: 'Salinger' },
+  { owner_id: 2, first_name: 'Franz', last_name: 'Kafka' }
 ]
 
 module.exports = {
@@ -23,8 +23,8 @@ module.exports = {
   create (payload) {
     const author = {
       id: data.length,
-      firstName: payload.firstName,
-      lastName: payload.lastName
+      first_name: payload.first_name,
+      last_name: payload.last_name
     }
     data.push(author)
     return author

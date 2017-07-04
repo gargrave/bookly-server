@@ -1,5 +1,5 @@
 const DB = require('../../globals/constants').db
-const data = require('../mocks/booksMock').get()
+const data = require('../mocks/book-mocks').get()
 
 const SQL_REST = `ALTER SEQUENCE "${DB.BOOKS}_id_seq" RESTART WITH 1; UPDATE "${DB.BOOKS}" SET id = DEFAULT;`
 

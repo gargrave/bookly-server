@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const apiErrors = require('../../../api/utils/apiErrors')
+const apiErrors = require('../../../api/utils/api-errors')
 const utils = require('../../../api/utils/utils')
 
 function getDefaultRequset () {

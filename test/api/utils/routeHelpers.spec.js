@@ -1,4 +1,4 @@
-const helpers = require('../../../api/utils/routeHelpers')
+const helpers = require('../../../api/utils/route-helpers')
 
 function buildRequest (ownerIdValue) {
   return { auth: { credentials: { id: ownerIdValue || 'bad owner ID' } } }
