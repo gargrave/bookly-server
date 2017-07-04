@@ -73,6 +73,27 @@ module.exports = {
     return res
   },
 
+  async update ({ ownerId, recordId, data, returning, dbName, resourceName = 'Record' }) {
+    let res = Boom.badRequest(apiErr.failedToUpdate(resourceName))
+
+    const where = { owner_id: ownerId, id: recordId }
+
+    try {
+      const result = await knex(dbName)
+        .where(where)
+        .update(data)
+        .returning(returning)
+
+      if (result.length) {
+        res = result[0]
+      }
+    } catch (err) {
+      env.error(err, 'genericQueries.update()')
+    }
+
+    return res
+  },
+
   async delete ({ ownerId, recordId, dbName, resourceName }) {
     let res = Boom.badRequest(apiErr.failedToDelete(resourceName))
 

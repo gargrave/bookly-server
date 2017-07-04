@@ -2,11 +2,10 @@
 
 const ApiRoute = require('./basic')
 
-const Boom = require('boom')
-
 const knex = require('../../database/db')
-const apiErr = require('../utils/apiErrors')
 const helpers = require('../utils/routeHelpers')
+
+const queries = require('./utils/generic-queries')
 
 class ApiUpdateRoute extends ApiRoute {
   constructor ({ path, auth, db, resourceName }) {
@@ -21,16 +20,7 @@ class ApiUpdateRoute extends ApiRoute {
 
   getHandler () {
     return (request, reply) => {
-      const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
-      const id = request.params.id
-
-      this.buildPayload(request.payload)
-        .then(data => {
-          this.query(id, ownerId, data).then(res => reply(res))
-        }, err => {
-          console.log(err)
-          reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
-        })
+      this.query(request, reply).then(res => reply(res))
     }
   }
 
@@ -48,37 +38,30 @@ class ApiUpdateRoute extends ApiRoute {
     })
   }
 
-  /**
-   * Runs all necessary queries and returns either error or data.
-   *
-   * @param {Object} data The payload data for the create request
-   */
-  async query (id, ownerId, data) {
-    let result = await this.runUpdateQuery({ id, ownerId }, data)
+  async query (request, reply) {
+    let result = await this.getUpdateQuery(request, reply)
     return result
   }
 
   /**
-   * Runs a SELECT query before the resource is deleted. This way we can
-   * have the original data to return AFTER it has been deleted.
-   *
-   * @param {Object} where The data to use for the WHERE clause
-   * @param {Object} data The payload data for the create request
+   * Returns the query to use for the UPDATE operation.
+   * By default, this simply returns the generic "UPDATE" query, but it
+   * can be overridden by a child class if it needs to provide a customized version.
    */
-  async runUpdateQuery (where, data) {
-    let val = Boom.badRequest(apiErr.failedToUpdate(this.resourceName))
+  async getUpdateQuery (request, reply) {
+    const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
+    const recordId = request.params.id
+    const data = await this.buildPayload(request.payload)
 
-    await knex(this.db)
-      .where(where)
-      .update(data)
-      .returning(this.getSelectParams())
-        .then(res => {
-          if (res.length) {
-            val = res[0]
-          }
-        })
-
-    return val
+    const params = {
+      ownerId,
+      recordId,
+      data,
+      returning: this.getSelectParams(),
+      dbName: this.db,
+      resourceName: this.resourceName
+    }
+    return queries.update(params)
   }
 }
 

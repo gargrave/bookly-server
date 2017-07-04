@@ -2,14 +2,10 @@
 
 const ApiUpdateRoute = require('../../generic-routes/update')
 
-const Boom = require('boom')
-
-const knex = require('../../../database/db')
-const DB = require('../../../globals/constants').db
-
-const apiErr = require('../../utils/apiErrors')
+const globalHelpers = require('../../utils/routeHelpers')
 
 const bookHelpers = require('../utils/book-helpers')
+const bookQueries = require('../utils/book-queries')
 const validator = require('../utils/book-validator')
 
 class BookUpdateRoute extends ApiUpdateRoute {
@@ -25,53 +21,27 @@ class BookUpdateRoute extends ApiUpdateRoute {
     return { payload: validator.create }
   }
 
-  getHandler () {
-    return (request, reply) => {
-      // TODO replace with helper
-      const ownerId = request.auth.credentials.id
-      if (!ownerId || !Number.isInteger(ownerId)) {
-        reply(Boom.unauthorized())
-      }
+  buildPayload (payload) {
+    return Promise.resolve(bookHelpers.buildPayload(payload))
+  }
 
-      const id = request.params.id
+  /**
+   * Override to use custom Book UPDATE query.
+   */
+  async getUpdateQuery (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
+    const recordId = request.params.id
+    const payload = await this.buildPayload(request.payload)
 
-      this.buildPayload(request.payload)
-        .then(data => {
-          knex(this.db)
-            .where({ id, ownerId })
-            .update(data)
-            .returning(this.getSelectParams())
-              .then(result => {
-                // HACK
-                // this is a hack to rebuild the response with full author data,
-                // as I could not initially figure out how to get Knex to do a
-                // JOIN and RETURNING clause at the same time
-                const authorId = result[0].author_id
-                knex(DB.AUTHORS)
-                  .select(['id as author_id', 'first_name', 'last_name'])
-                  .where({
-                    ownerId,
-                    id: authorId
-                  })
-                  .limit(1)
-                  .then(authorResult => {
-                    if (!authorResult.length) {
-                      return reply(Boom.notFound(apiErr.notFound('Author', authorId)))
-                    }
-                    reply(bookHelpers.populateAuthor(
-                      Object.assign({}, result[0], authorResult[0]))
-                    )
-                  })
-                  // ENDHACK
-              }, err => {
-                console.log(err)
-                reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
-              })
-        }, err => {
-          console.log(err)
-          reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
-        })
+    const params = {
+      ownerId,
+      recordId,
+      payload,
+      returning: this.getSelectParams(),
+      dbName: this.db,
+      resourceName: this.resourceName
     }
+    return bookQueries.updateBook(params)
   }
 }
 

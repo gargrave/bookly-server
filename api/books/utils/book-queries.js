@@ -29,15 +29,58 @@ module.exports = {
         .insert(payload)
         .returning(returning)
 
-      // HACK: This is a hack to rebuild the response with full author data,
-      // as I could not initially figure out how to get Knex to do a
-      // JOIN and RETURNING clause at the same time
-      const authorRecord = await this.selectAuthorForBook(payload.owner_id, payload.author_id)
-      if (bookRecord.length && authorRecord.length) {
-        res = bookHelpers.populateAuthor(Object.assign({},
-          bookRecord[0],
-          authorRecord[0])
-        )
+      if (bookRecord.length) {
+        const book = bookRecord[0]
+        // HACK: This is a hack to rebuild the response with full author data,
+        // as I could not initially figure out how to get Knex to do a
+        // JOIN and RETURNING clause at the same time
+        const authorRecord = await this.selectAuthorForBook(payload.owner_id, book.author_id)
+        if (authorRecord.length) {
+          res = bookHelpers.populateAuthor(Object.assign({},
+            book,
+            authorRecord[0])
+          )
+        }
+      }
+    } catch (err) {
+      env.error(err, 'bookQueries.createBook()')
+
+      const msg = err.message || ''
+      // check if this is 'unique constaint' error
+      if (msg.indexOf('violates unique constraint') !== -1) {
+        res = Boom.badRequest(apiErr.matchingRecord(resourceName))
+      }
+    }
+
+    return res
+  },
+
+  /**
+   * Attempts to UPDATE an existing Book record based on the provided data.
+   */
+  async updateBook ({ ownerId, recordId, payload, returning }) {
+    let res = Boom.badRequest(apiErr.failedToUpdate(resourceName))
+
+    const where = { owner_id: ownerId, id: recordId }
+
+    try {
+      const bookRecord = await knex(DB.BOOKS)
+        .where(where)
+        .update(payload)
+        .returning(returning)
+
+      if (bookRecord.length) {
+        const book = bookRecord[0]
+        // HACK: This is a hack to rebuild the response with full author data,
+        // as I could not initially figure out how to get Knex to do a
+        // JOIN and RETURNING clause at the same time
+        const authorRecord = await this.selectAuthorForBook(ownerId, book.author_id)
+        if (authorRecord.length) {
+          res = bookHelpers.populateAuthor(Object.assign({},
+            book,
+            authorRecord[0])
+          )
+        }
       }
     } catch (err) {
       env.error(err, 'bookQueries.createBook()')
