@@ -21,6 +21,7 @@ class BooksListRoute extends ApiListRoute {
    */
   getHandler () {
     return (request, reply) => {
+      // TODO replace with helper
       const ownerId = request.auth.credentials.id
       if (!ownerId || !Number.isInteger(ownerId)) {
         reply(Boom.unauthorized())
@@ -28,8 +29,8 @@ class BooksListRoute extends ApiListRoute {
 
       knex(this.db)
         .select(this.getSelectParams())
-        .innerJoin(DB.AUTHORS, `${DB.BOOKS}.authorId`, `${DB.AUTHORS}.id`)
-        .where({ [`${DB.BOOKS}.ownerId`]: ownerId })
+        .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
+        .where({ [`${DB.BOOKS}.owner_id`]: ownerId })
           .then(results => {
             reply(helpers.populateAuthor(results))
           })

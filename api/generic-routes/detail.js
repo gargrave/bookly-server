@@ -35,7 +35,7 @@ class ApiDetailRoute extends ApiRoute {
    * @param {*} ownerId The owner ID of the user making the request
    */
   async query (id, ownerId) {
-    let result = await this.runSelectQuery({ id, ownerId })
+    let result = await this.runSelectQuery({ id, owner_id: ownerId })
     return result
   }
 

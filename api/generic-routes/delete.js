@@ -35,8 +35,8 @@ class ApiDeleteRoute extends ApiRoute {
    * @param {*} ownerId The owner ID of the user making the request
    */
   async query (id, ownerId) {
-    let sel = await this.runSelectQuery({ id, ownerId })
-    let del = await this.runDeleteQuery({ id, ownerId })
+    let sel = await this.runSelectQuery({ id, owner_id: ownerId })
+    let del = await this.runDeleteQuery({ id, owner_id: ownerId })
     // if we get nothing back from del(), everything went okay
     return del !== undefined ? del : sel
   }

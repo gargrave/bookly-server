@@ -23,6 +23,7 @@ class BookUpdateRoute extends ApiUpdateRoute {
 
   getHandler () {
     return (request, reply) => {
+      // TODO replace with helper
       const ownerId = request.auth.credentials.id
       if (!ownerId || !Number.isInteger(ownerId)) {
         reply(Boom.unauthorized())
@@ -41,9 +42,9 @@ class BookUpdateRoute extends ApiUpdateRoute {
                 // this is a hack to rebuild the response with full author data,
                 // as I could not initially figure out how to get Knex to do a
                 // JOIN and RETURNING clause at the same time
-                const authorId = result[0].authorId
+                const authorId = result[0].author_id
                 knex(DB.AUTHORS)
-                  .select(['id as authorId', 'firstName', 'lastName'])
+                  .select(['id as author_id', 'first_name', 'last_name'])
                   .where({
                     ownerId,
                     id: authorId
@@ -70,7 +71,7 @@ class BookUpdateRoute extends ApiUpdateRoute {
   }
 
   getSelectParams () {
-    return ['id', 'authorId', 'title', 'created_at', 'updated_at']
+    return ['id', 'author_id', 'title', 'created_at', 'updated_at']
   }
 
   getValidators () {

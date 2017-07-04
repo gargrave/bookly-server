@@ -7,5 +7,13 @@ module.exports = {
     resourceName: 'Author'
   },
 
-  selectCols: ['id', 'firstName', 'lastName', 'created_at', 'updated_at']
+  selectCols: ['id', 'first_name', 'last_name', 'created_at', 'updated_at'],
+
+  buildPayload (payload) {
+    return {
+      owner_id: payload.owner_id,
+      first_name: payload.firstName,
+      last_name: payload.lastName
+    }
+  }
 }

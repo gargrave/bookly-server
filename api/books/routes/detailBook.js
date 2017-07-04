@@ -34,9 +34,9 @@ class BookDetailRoute extends ApiDetailRoute {
 
       knex(this.db)
         .select(this.getSelectParams())
-        .innerJoin(DB.AUTHORS, `${DB.BOOKS}.authorId`, `${DB.AUTHORS}.id`)
+        .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
         .where({
-          [`${DB.BOOKS}.ownerId`]: ownerId,
+          [`${DB.BOOKS}.owner_id`]: ownerId,
           [`${DB.BOOKS}.id`]: request.params.id
         })
         .limit(1)

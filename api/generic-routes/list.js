@@ -32,7 +32,7 @@ class ApiListRoute extends ApiRoute {
    * @param {*} ownerId The owner ID of the user making the request
    */
   async query (ownerId) {
-    let result = await this.runSelectQuery({ ownerId })
+    let result = await this.runSelectQuery({ owner_id: ownerId })
     return result
   }
 

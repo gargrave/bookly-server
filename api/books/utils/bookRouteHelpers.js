@@ -9,7 +9,7 @@ module.exports = {
 
   selectCols: [
     `${DB.BOOKS}.id`, `${DB.BOOKS}.title`, `${DB.BOOKS}.created_at`, `${DB.BOOKS}.updated_at`,
-    `${DB.BOOKS}.authorId`, `${DB.AUTHORS}.firstName`, `${DB.AUTHORS}.lastName`
+    `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.first_name`, `${DB.AUTHORS}.last_name`
   ],
 
   populateAuthor: function (bookQueryResult) {
@@ -24,14 +24,14 @@ module.exports = {
     function parseBook (book) {
       // build a cleaner version of the author
       book.author = {
-        id: book.authorId,
-        name: `${book.firstName} ${book.lastName}`
+        id: book.author_id,
+        name: `${book.first_name} ${book.last_name}`
       }
 
       // remove the original fields
-      delete book.authorId
-      delete book.firstName
-      delete book.lastName
+      delete book.author_id
+      delete book.first_name
+      delete book.last_name
     }
 
     return bookQueryResult
