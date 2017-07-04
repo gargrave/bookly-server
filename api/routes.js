@@ -16,7 +16,7 @@ module.exports = [
   // Author routes
   './api/authors/routes/createAuthor',
   './api/authors/routes/detailAuthor',
-  './api/authors/routes/listAuthors',
+  './api/authors/routes/authors-list',
   './api/authors/routes/updateAuthor',
   './api/authors/routes/deleteAuthor',
 
