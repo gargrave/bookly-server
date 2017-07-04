@@ -2,7 +2,7 @@
 
 const ApiRoute = require('./basic')
 
-const helpers = require('../utils/routeHelpers')
+const globalHelpers = require('../utils/routeHelpers')
 
 const queries = require('./utils/generic-queries')
 
@@ -28,7 +28,7 @@ class ApiListRoute extends ApiRoute {
    * can be overridden by a child class if it needs to provide a customized version.
    */
   getSelectQuery (request, reply) {
-    const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
     const params = {
       ownerId,
       selectCols: this.getSelectParams(),

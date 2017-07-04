@@ -3,7 +3,8 @@
 const ApiRoute = require('./basic')
 
 const knex = require('../../database/db')
-const helpers = require('../utils/routeHelpers')
+
+const globalHelpers = require('../utils/routeHelpers')
 
 const queries = require('./utils/generic-queries')
 
@@ -49,7 +50,7 @@ class ApiUpdateRoute extends ApiRoute {
    * can be overridden by a child class if it needs to provide a customized version.
    */
   async getUpdateQuery (request, reply) {
-    const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
     const recordId = request.params.id
     const data = await this.buildPayload(request.payload)
 
