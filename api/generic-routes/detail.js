@@ -2,7 +2,7 @@
 
 const ApiRoute = require('./basic')
 
-const helpers = require('../utils/routeHelpers')
+const globalHelpers = require('../utils/routeHelpers')
 
 const queries = require('./utils/generic-queries')
 
@@ -23,18 +23,27 @@ class ApiDetailRoute extends ApiRoute {
     }
   }
 
-  async query (request, reply) {
-    const ownerId = helpers.getOwnerIdOrDieTrying(request, reply)
-
-    const queryParams = {
+  /**
+   * Returns the query to use for SELECT operation.
+   * By default, this simply returns the generic "SELECT one" query, but it
+   * can be overridden by a child class if it needs to provide a customized version.
+   */
+  getSelectQuery (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
+    const recordId = request.params.id
+    const params = {
       ownerId,
-      recordId: request.params.id,
-      selectCols: this.getSelectParams(),
+      recordId,
       dbName: this.db,
-      resourceName: this.resourceName
+      resourceName: this.resourceName,
+      selectCols: this.getSelectParams()
     }
 
-    let result = await queries.selectOne(queryParams)
+    return queries.selectOne(params)
+  }
+
+  async query (request, reply) {
+    let result = await this.getSelectQuery(request, reply)
     return result
   }
 }
