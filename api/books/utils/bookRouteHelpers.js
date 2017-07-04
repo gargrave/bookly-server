@@ -12,6 +12,18 @@ module.exports = {
     `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.first_name`, `${DB.AUTHORS}.last_name`
   ],
 
+  selectColsWithoutAuthor: [
+    'id', 'title', 'created_at', 'updated_at', 'author_id'
+  ],
+
+  buildPayload (payload) {
+    return {
+      owner_id: payload.owner_id,
+      title: payload.title,
+      author_id: payload.authorId
+    }
+  },
+
   populateAuthor: function (bookQueryResult) {
     if (Array.isArray(bookQueryResult)) {
       for (let book of bookQueryResult) {

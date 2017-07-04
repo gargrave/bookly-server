@@ -75,7 +75,7 @@ class BookUpdateRoute extends ApiUpdateRoute {
   }
 
   getValidators () {
-    return { payload: validator.onCreate }
+    return { payload: validator.create }
   }
 }
 

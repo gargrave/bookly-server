@@ -9,5 +9,5 @@ const baseValidator = {
 }
 
 module.exports = {
-  onCreate: Joi.object(baseValidator)
+  create: Joi.object(baseValidator)
 }
