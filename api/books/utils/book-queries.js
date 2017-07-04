@@ -8,7 +8,7 @@ const knex = require('../../../database/db')
 
 const apiErr = require('../../utils/apiErrors')
 
-const bookHelpers = require('./bookRouteHelpers')
+const bookHelpers = require('./book-helpers')
 
 const resourceName = 'Book'
 
@@ -40,7 +40,7 @@ module.exports = {
         )
       }
     } catch (err) {
-      env.error(err, 'bookQueries.create()')
+      env.error(err, 'bookQueries.createBook()')
 
       const msg = err.message || ''
       // check if this is 'unique constaint' error

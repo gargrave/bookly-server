@@ -6,19 +6,23 @@ const Boom = require('boom')
 
 const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
-const apiErr = require('../../utils/apiErrors')
-const helpers = require('../utils/bookRouteHelpers')
-const validator = require('../utils/bookValidator')
 
-const params = {
-  path: 'books',
-  db: DB.BOOKS,
-  resourceName: 'Book'
-}
+const apiErr = require('../../utils/apiErrors')
+
+const bookHelpers = require('../utils/book-helpers')
+const validator = require('../utils/book-validator')
 
 class BookUpdateRoute extends ApiUpdateRoute {
   constructor () {
-    super(params)
+    super(bookHelpers.params)
+  }
+
+  getSelectParams () {
+    return bookHelpers.selectColsWithoutAuthor
+  }
+
+  getValidators () {
+    return { payload: validator.create }
   }
 
   getHandler () {
@@ -54,7 +58,7 @@ class BookUpdateRoute extends ApiUpdateRoute {
                     if (!authorResult.length) {
                       return reply(Boom.notFound(apiErr.notFound('Author', authorId)))
                     }
-                    reply(helpers.populateAuthor(
+                    reply(bookHelpers.populateAuthor(
                       Object.assign({}, result[0], authorResult[0]))
                     )
                   })
@@ -68,14 +72,6 @@ class BookUpdateRoute extends ApiUpdateRoute {
           reply(Boom.badRequest(apiErr.failedToUpdate(this.resourceName)))
         })
     }
-  }
-
-  getSelectParams () {
-    return ['id', 'author_id', 'title', 'created_at', 'updated_at']
-  }
-
-  getValidators () {
-    return { payload: validator.create }
   }
 }
 

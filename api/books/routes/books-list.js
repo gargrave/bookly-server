@@ -4,16 +4,18 @@ const ApiListRoute = require('../../generic-routes/list')
 
 const Boom = require('boom')
 
-const DB = require('../../../globals/constants').db
 const knex = require('../../../database/db')
-const helpers = require('../utils/bookRouteHelpers')
+const DB = require('../../../globals/constants').db
+
+const bookHelpers = require('../utils/book-helpers')
 
 class BooksListRoute extends ApiListRoute {
   constructor () {
-    super({
-      path: 'books',
-      db: DB.BOOKS
-    })
+    super(bookHelpers.params)
+  }
+
+  getSelectParams () {
+    return bookHelpers.selectCols
   }
 
   /*
@@ -32,13 +34,9 @@ class BooksListRoute extends ApiListRoute {
         .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
         .where({ [`${DB.BOOKS}.owner_id`]: ownerId })
           .then(results => {
-            reply(helpers.populateAuthor(results))
+            reply(bookHelpers.populateAuthor(results))
           })
     }
-  }
-
-  getSelectParams () {
-    return helpers.selectCols
   }
 }
 

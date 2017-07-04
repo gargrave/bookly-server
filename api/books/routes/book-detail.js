@@ -5,19 +5,19 @@ const ApiDetailRoute = require('../../generic-routes/detail')
 const Boom = require('boom')
 
 const DB = require('../../../globals/constants').db
-const apiErr = require('../../utils/apiErrors')
 const knex = require('../../../database/db')
-const helpers = require('../utils/bookRouteHelpers')
 
-const params = {
-  path: 'books',
-  db: DB.BOOKS,
-  resourceName: 'Book'
-}
+const apiErr = require('../../utils/apiErrors')
+
+const bookHelpers = require('../utils/book-helpers')
 
 class BookDetailRoute extends ApiDetailRoute {
   constructor () {
-    super(params)
+    super(bookHelpers.params)
+  }
+
+  getSelectParams () {
+    return bookHelpers.selectCols
   }
 
   /*
@@ -44,13 +44,9 @@ class BookDetailRoute extends ApiDetailRoute {
           if (!result.length) {
             return reply(Boom.notFound(apiErr.notFound(this.resourceName, id)))
           }
-          reply(helpers.populateAuthor(result[0]))
+          reply(bookHelpers.populateAuthor(result[0]))
         })
     }
-  }
-
-  getSelectParams () {
-    return helpers.selectCols
   }
 }
 

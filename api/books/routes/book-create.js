@@ -2,10 +2,11 @@
 
 const ApiCreateRoute = require('../../generic-routes/create')
 
-const prereqs = require('../../utils/prereqs')
-const bookHelpers = require('../utils/bookRouteHelpers')
+const globalPrereqs = require('../../utils/prereqs')
+
+const bookHelpers = require('../utils/book-helpers')
 const bookQueries = require('../utils/book-queries')
-const validator = require('../utils/bookValidator')
+const validator = require('../utils/book-validator')
 
 class BookCreateRoute extends ApiCreateRoute {
   constructor () {
@@ -18,7 +19,7 @@ class BookCreateRoute extends ApiCreateRoute {
 
   getPrerequisites () {
     return [
-      { method: prereqs.populateOwnerId, failAction: 'error' }
+      { method: globalPrereqs.populateOwnerId, failAction: 'error' }
     ]
   }
 
@@ -38,7 +39,7 @@ class BookCreateRoute extends ApiCreateRoute {
 
   async query (request, reply) {
     const queryParams = {
-      data: await this.buildPayload(request.payload),
+      payload: await this.buildPayload(request.payload),
       returning: this.getSelectParams()
     }
     const result = await bookQueries.createBook(queryParams)

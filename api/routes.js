@@ -22,8 +22,8 @@ module.exports = [
 
   // Book routes
   './api/books/routes/book-create',
-  './api/books/routes/detailBook',
-  './api/books/routes/listBooks',
-  './api/books/routes/updateBook',
-  './api/books/routes/deleteBook'
+  './api/books/routes/book-delete',
+  './api/books/routes/book-detail',
+  './api/books/routes/book-update',
+  './api/books/routes/books-list'
 ]

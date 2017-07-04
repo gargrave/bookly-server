@@ -4,14 +4,16 @@ const ApiDeleteRoute = require('../../generic-routes/delete')
 
 const Boom = require('boom')
 
-const DB = require('../../../globals/constants').db
-const apiErr = require('../../utils/apiErrors')
 const knex = require('../../../database/db')
-const helpers = require('../utils/bookRouteHelpers')
+const DB = require('../../../globals/constants').db
+
+const apiErr = require('../../utils/apiErrors')
+
+const bookHelpers = require('../utils/book-helpers')
 
 class BookDeleteRoute extends ApiDeleteRoute {
   constructor () {
-    super(helpers.params)
+    super(bookHelpers.params)
   }
 
   /**
@@ -31,7 +33,7 @@ class BookDeleteRoute extends ApiDeleteRoute {
       .limit(1)
       .then(res => {
         if (res.length) {
-          val = helpers.populateAuthor(res[0])
+          val = bookHelpers.populateAuthor(res[0])
         }
       })
 
@@ -39,7 +41,7 @@ class BookDeleteRoute extends ApiDeleteRoute {
   }
 
   getSelectParams () {
-    return helpers.selectCols
+    return bookHelpers.selectCols
   }
 }
 
