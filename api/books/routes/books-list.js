@@ -2,12 +2,10 @@
 
 const ApiListRoute = require('../../generic-routes/list')
 
-const Boom = require('boom')
-
-const knex = require('../../../database/db')
-const DB = require('../../../globals/constants').db
+const globalHelpers = require('../../utils/routeHelpers')
 
 const bookHelpers = require('../utils/book-helpers')
+const queries = require('../utils/book-queries')
 
 class BooksListRoute extends ApiListRoute {
   constructor () {
@@ -18,25 +16,18 @@ class BooksListRoute extends ApiListRoute {
     return bookHelpers.selectCols
   }
 
-  /*
-   * Override of the handler builder to run a JOIN command on the Author data.
+  /**
+   * Override to use custom Book SELECT method to populate the Author data.
    */
-  getHandler () {
-    return (request, reply) => {
-      // TODO replace with helper
-      const ownerId = request.auth.credentials.id
-      if (!ownerId || !Number.isInteger(ownerId)) {
-        reply(Boom.unauthorized())
-      }
-
-      knex(this.db)
-        .select(this.getSelectParams())
-        .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
-        .where({ [`${DB.BOOKS}.owner_id`]: ownerId })
-          .then(results => {
-            reply(bookHelpers.populateAuthor(results))
-          })
+  getSelectQuery (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
+    const params = {
+      ownerId,
+      selectCols: this.getSelectParams(),
+      limit: 50
     }
+
+    return queries.selectBookAndPopulateAuthor(params)
   }
 }
 

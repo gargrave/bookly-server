@@ -55,24 +55,35 @@ module.exports = {
   /**
    * Attempts to SELECT the book specified by recordId, and INNER JOIN the Author
    * specified by the Book's 'author_id' field.
+   *
+   * Can process both multiple selection (i.e. "list") and single select (i.e. "find").
+   * For single selection, the 'recordId' param must be provided.
+   * For multiple selection, the 'limit' param must be provided, as it defaults to 1.
    */
-  async selectBookAndPopulateAuthor ({ ownerId, recordId, selectCols }) {
+  async selectBookAndPopulateAuthor ({ ownerId, selectCols, recordId, limit = 1 }) {
     let res = Boom.badRequest(apiErr.notFound(resourceName, recordId))
 
+    // build the WHERE clause, with optional record id (i.e. for single selection)
     const where = {
-      [`${DB.BOOKS}.owner_id`]: ownerId,
-      [`${DB.BOOKS}.id`]: recordId
+      [`${DB.BOOKS}.owner_id`]: ownerId
+    }
+    if (recordId) {
+      where[`${DB.BOOKS}.id`] = recordId
     }
 
     try {
-      const bookRecord = await knex(DB.BOOKS)
+      const bookRecords = await knex(DB.BOOKS)
         .select(selectCols)
         .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
         .where(where)
-        .limit(1)
+        .limit(limit)
 
-      if (bookRecord.length) {
-        res = bookHelpers.populateAuthor(bookRecord[0])
+      if (bookRecords.length) {
+        if (bookRecords.length === 1) {
+          res = bookHelpers.populateAuthor(bookRecords[0])
+        } else {
+          res = bookHelpers.populateAuthor(bookRecords)
+        }
       }
     } catch (err) {
       env.error(err, 'bookQueries.createBook()')

@@ -23,7 +23,27 @@ module.exports = {
         res = result[0]
       }
     } catch (err) {
-      env.error(err, 'genericQueries.select()')
+      env.error(err, 'genericQueries.selectOne()')
+    }
+
+    return res
+  },
+
+  async selectAll ({ ownerId, selectCols, dbName }) {
+    let res = Boom.badRequest()
+
+    const where = { owner_id: ownerId }
+
+    try {
+      const records = await knex(dbName)
+        .select(selectCols)
+        .where(where)
+
+      if (records.length) {
+        res = records
+      }
+    } catch (err) {
+      env.error(err, 'genericQueries.selectAll()')
     }
 
     return res
@@ -68,7 +88,7 @@ module.exports = {
         res = null
       }
     } catch (err) {
-      env.error(err, 'genericQueries.create()')
+      env.error(err, 'genericQueries.delete()')
     }
 
     return res
