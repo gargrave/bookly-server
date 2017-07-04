@@ -2,7 +2,7 @@
 
 const ApiDetailRoute = require('../../generic-routes/detail')
 
-const globalHelpers = require('../../utils/routeHelpers')
+const globalHelpers = require('../../utils/route-helpers')
 
 const bookHelpers = require('../utils/book-helpers')
 const bookQueries = require('../utils/book-queries')

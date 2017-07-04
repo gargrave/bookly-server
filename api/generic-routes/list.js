@@ -2,7 +2,7 @@
 
 const ApiRoute = require('./basic')
 
-const globalHelpers = require('../utils/routeHelpers')
+const globalHelpers = require('../utils/route-helpers')
 
 const queries = require('./utils/generic-queries')
 

@@ -4,7 +4,7 @@ const ApiRoute = require('./basic')
 
 const knex = require('../../database/db')
 
-const globalHelpers = require('../utils/routeHelpers')
+const globalHelpers = require('../utils/route-helpers')
 
 const queries = require('./utils/generic-queries')
 

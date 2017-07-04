@@ -4,7 +4,7 @@ const ApiRoute = require('../../generic-routes/basic')
 
 const DB = require('../../../globals/constants').db
 
-const globalHelpers = require('../../utils/routeHelpers')
+const globalHelpers = require('../../utils/route-helpers')
 
 const authHelpers = require('../utils/auth-helpers')
 const authQueries = require('../utils/auth-queries')
