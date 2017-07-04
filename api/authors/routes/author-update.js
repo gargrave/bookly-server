@@ -2,8 +2,8 @@
 
 const ApiUpdateRoute = require('../../generic-routes/update')
 
-const helpers = require('../utils/authorRouteHelpers')
-const validator = require('../utils/authorValidator')
+const helpers = require('../utils/author-helpers')
+const validator = require('../utils/author-validator')
 
 class AuthorUpdateRoute extends ApiUpdateRoute {
   constructor () {
@@ -15,7 +15,7 @@ class AuthorUpdateRoute extends ApiUpdateRoute {
   }
 
   getValidators () {
-    return { payload: validator.onCreate }
+    return { payload: validator.create }
   }
 }
 

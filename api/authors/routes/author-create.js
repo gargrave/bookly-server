@@ -2,9 +2,10 @@
 
 const ApiCreateRoute = require('../../generic-routes/create')
 
-const authorHelpers = require('../utils/authorRouteHelpers')
 const prereqs = require('../../utils/prereqs')
-const validator = require('../utils/authorValidator')
+
+const authorHelpers = require('../utils/author-helpers')
+const validator = require('../utils/author-validator')
 
 class AuthorCreateRoute extends ApiCreateRoute {
   constructor () {
@@ -22,7 +23,7 @@ class AuthorCreateRoute extends ApiCreateRoute {
   }
 
   getValidators () {
-    return { payload: validator.onCreate }
+    return { payload: validator.create }
   }
 
   buildPayload (payload) {

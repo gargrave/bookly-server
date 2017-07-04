@@ -15,10 +15,10 @@ module.exports = [
 
   // Author routes
   './api/authors/routes/author-create',
-  './api/authors/routes/detailAuthor',
+  './api/authors/routes/author-delete',
+  './api/authors/routes/author-detail',
+  './api/authors/routes/author-update',
   './api/authors/routes/authors-list',
-  './api/authors/routes/updateAuthor',
-  './api/authors/routes/deleteAuthor',
 
   // Book routes
   './api/books/routes/book-create',

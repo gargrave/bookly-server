@@ -1,3 +1,5 @@
+'use strict'
+
 const DB = require('../../../globals/constants').db
 
 module.exports = {

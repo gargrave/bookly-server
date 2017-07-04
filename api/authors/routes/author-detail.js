@@ -2,7 +2,7 @@
 
 const ApiDetailRoute = require('../../generic-routes/detail')
 
-const helpers = require('../utils/authorRouteHelpers')
+const helpers = require('../utils/author-helpers')
 
 class AuthorDetailRoute extends ApiDetailRoute {
   constructor () {

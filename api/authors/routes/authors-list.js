@@ -2,7 +2,7 @@
 
 const ApiListRoute = require('../../generic-routes/list')
 
-const helpers = require('../utils/authorRouteHelpers')
+const helpers = require('../utils/author-helpers')
 
 class AuthorsListRoute extends ApiListRoute {
   constructor () {
