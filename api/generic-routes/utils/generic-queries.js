@@ -2,10 +2,10 @@
 
 const Boom = require('boom')
 
-const env = require('../../../globals/env')
 const knex = require('../../../database/db')
+const env = require('../../../globals/env')
 
-const apiErr = require('../../utils/apiErrors')
+const apiErr = require('../../utils/api-errors')
 
 module.exports = {
   async selectOne ({ ownerId, recordId, selectCols, dbName, resourceName = 'Record' }) {

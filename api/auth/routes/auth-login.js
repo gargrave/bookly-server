@@ -8,7 +8,7 @@ const Boom = require('boom')
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
 
-const apiErr = require('../../utils/apiErrors')
+const apiErr = require('../../utils/api-errors')
 
 const authHelpers = require('../utils/auth-helpers')
 const authQueries = require('../utils/auth-queries')

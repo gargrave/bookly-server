@@ -9,7 +9,7 @@ const knex = require('../../../database/db')
 const env = require('../../../globals/env')
 
 const mailer = require('../../emails/mailer')
-const apiErrors = require('../../utils/apiErrors')
+const apiErrors = require('../../utils/api-errors')
 const utils = require('../../utils/utils')
 
 const validator = require('../utils/auth-validator')

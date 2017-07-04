@@ -2,11 +2,11 @@
 
 const Boom = require('boom')
 
+const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
 const env = require('../../../globals/env')
-const knex = require('../../../database/db')
 
-const apiErr = require('../../utils/apiErrors')
+const apiErr = require('../../utils/api-errors')
 
 const bookHelpers = require('./book-helpers')
 
