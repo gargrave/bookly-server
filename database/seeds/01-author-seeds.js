@@ -10,8 +10,8 @@ exports.seed = (Knex, Promise) => {
         return Knex.raw(SQL_REST)
           .then(() => {
             return Knex(DB.AUTHORS)
-            .insert(data)
-            .then(resolve)
+              .insert(data)
+              .then(resolve)
           })
       })
   })
