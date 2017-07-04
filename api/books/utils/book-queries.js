@@ -53,6 +53,35 @@ module.exports = {
   },
 
   /**
+   * Attempts to SELECT the book specified by bookId, and INNER JOIN the Author
+   * specified by the Book's 'author_id' field.
+   */
+  async selectBookAndJoinAuthor ({ ownerId, bookId, selectCols }) {
+    let res = Boom.badRequest(apiErr.notFound(resourceName, bookId))
+
+    const where = {
+      [`${DB.BOOKS}.owner_id`]: ownerId,
+      [`${DB.BOOKS}.id`]: bookId
+    }
+
+    try {
+      const bookRecord = await knex(DB.BOOKS)
+        .select(selectCols)
+        .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
+        .where(where)
+        .limit(1)
+
+      if (bookRecord.length) {
+        res = bookRecord[0]
+      }
+    } catch (err) {
+      env.error(err, 'bookQueries.createBook()')
+    }
+
+    return res
+  },
+
+  /**
    * Attempts to SELECT the specified Author record and structure in a fashion
    * appropriate to be nested within a Book object for the HTTP response.
    *

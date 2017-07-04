@@ -2,14 +2,10 @@
 
 const ApiDetailRoute = require('../../generic-routes/detail')
 
-const Boom = require('boom')
-
-const DB = require('../../../globals/constants').db
-const knex = require('../../../database/db')
-
-const apiErr = require('../../utils/apiErrors')
+const globalHelpers = require('../../utils/routeHelpers')
 
 const bookHelpers = require('../utils/book-helpers')
+const bookQueries = require('../utils/book-queries')
 
 class BookDetailRoute extends ApiDetailRoute {
   constructor () {
@@ -20,33 +16,21 @@ class BookDetailRoute extends ApiDetailRoute {
     return bookHelpers.selectCols
   }
 
-  /*
-   * Override of the handler builder to run a JOIN command on the Author data.
-   */
   getHandler () {
     return (request, reply) => {
-      const ownerId = request.auth.credentials.id
-      if (!ownerId || !Number.isInteger(ownerId)) {
-        reply(Boom.unauthorized())
-      }
-
-      const id = request.params.id
-
-      knex(this.db)
-        .select(this.getSelectParams())
-        .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
-        .where({
-          [`${DB.BOOKS}.owner_id`]: ownerId,
-          [`${DB.BOOKS}.id`]: request.params.id
-        })
-        .limit(1)
-        .then(result => {
-          if (!result.length) {
-            return reply(Boom.notFound(apiErr.notFound(this.resourceName, id)))
-          }
-          reply(bookHelpers.populateAuthor(result[0]))
-        })
+      this.query(request, reply).then(res => reply(res))
     }
+  }
+
+  async query (request, reply) {
+    const ownerId = globalHelpers.getOwnerIdOrDieTrying(request)
+    const queryParams = {
+      ownerId,
+      bookId: request.params.id,
+      selectCols: this.getSelectParams()
+    }
+    const result = await bookQueries.selectBookAndJoinAuthor(queryParams)
+    return bookHelpers.populateAuthor(result)
   }
 }
 
