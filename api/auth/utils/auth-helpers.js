@@ -4,6 +4,14 @@ module.exports = {
   userSelectCols: ['id', 'email', 'created_at', 'updated_at', 'last_login', 'verified'],
   profileSelectCols: ['id', 'first_name', 'last_name', 'created_at', 'updated_at'],
 
+  buildPayloadForProfile (payload) {
+    return {
+      owner_id: payload.owner_id,
+      first_name: payload.firstName || '',
+      last_name: payload.lastName || ''
+    }
+  },
+
   /**
    * Builds a JWT based on the provided user data
    *

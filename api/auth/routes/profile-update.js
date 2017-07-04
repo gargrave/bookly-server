@@ -29,35 +29,14 @@ class ProfileUpdateRoute extends ApiUpdateRoute {
 
   /**
    * Override to do the following:
-   *    - Update naming to snake_case
-   *    - Provide defaults for non-required values
+   *    - Use the custom Profile payload builder
+   *    - Update the 'updated_at' prop to use NOW()
    */
   buildPayload (payload) {
-    return new Promise((resolve, reject) => {
-      resolve(Object.assign({},
-        {
-          first_name: payload.firstName || '',
-          last_name: payload.lastName || ''
-        },
-        {
-          updated_at: knex.raw('NOW()')
-        }
-      ))
-    })
-  }
-
-  /**
-   * HACK:
-   * This is only a temp fix until we revamp the DB migrations to user "owner_id" instead of "ownerId".
-   * Can be removed at a later date.
-   *
-   * Runs all necessary queries and returns either error or data.
-   *
-   * @param {Object} data The payload data for the create request
-   */
-  async query (id, ownerId, data) {
-    let result = await this.runUpdateQuery({ id, owner_id: ownerId }, data)
-    return result
+    return Promise.resolve(Object.assign({},
+      authHelpers.buildPayloadForProfile(payload),
+      { updated_at: knex.raw('NOW()') }
+    ))
   }
 }
 
