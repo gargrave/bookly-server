@@ -34,7 +34,7 @@ class BookDetailRoute extends ApiDetailRoute {
       recordId: request.params.id,
       selectCols: this.getSelectParams()
     }
-    return bookQueries.selectBookAndPopulateAuthor(queryParams)
+    return bookQueries.selectOneBookAndPopulateAuthor(queryParams)
   }
 }
 

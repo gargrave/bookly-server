@@ -30,5 +30,23 @@ module.exports = {
     }
     data.push(author)
     return author
+  },
+
+  getOwnedRecordId (userId) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].owner_id === userId) {
+        return i + 1
+      }
+    }
+    return undefined
+  },
+
+  getUnownedRecordId (userId) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].owner_id !== userId) {
+        return i + 1
+      }
+    }
+    return undefined
   }
 }

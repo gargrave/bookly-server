@@ -23,11 +23,10 @@ class BooksListRoute extends ApiListRoute {
     const ownerId = globalHelpers.getOwnerIdOrDieTrying(request, reply)
     const params = {
       ownerId,
-      selectCols: this.getSelectParams(),
-      limit: 50
+      selectCols: this.getSelectParams()
     }
 
-    return queries.selectBookAndPopulateAuthor(params)
+    return queries.selectAllBooksAndPopulateAuthor(params)
   }
 }
 
