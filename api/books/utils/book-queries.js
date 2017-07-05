@@ -123,11 +123,13 @@ module.exports = {
 
       if (bookRecords.length) {
         if (bookRecords.length === 1) {
-          res = bookHelpers.populateAuthor(bookRecords[0])
+          // if we get a single record, make sure to wrap it as an Array
+          res = [bookHelpers.populateAuthor(bookRecords[0])]
         } else {
           res = bookHelpers.populateAuthor(bookRecords)
         }
       } else {
+        // if no records exist, we still need to return an empty array
         res = []
       }
     } catch (err) {

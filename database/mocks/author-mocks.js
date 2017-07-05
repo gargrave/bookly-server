@@ -8,7 +8,9 @@ let data = [
   { owner_id: 2, first_name: 'Bill', last_name: 'Bryson' },
   { owner_id: 2, first_name: 'Aldous', last_name: 'Huxley' },
   { owner_id: 2, first_name: 'J. D.', last_name: 'Salinger' },
-  { owner_id: 2, first_name: 'Franz', last_name: 'Kafka' }
+  { owner_id: 2, first_name: 'Franz', last_name: 'Kafka' },
+
+  { owner_id: 4, first_name: 'Kurt', last_name: 'Vonnegut' }
 ]
 
 module.exports = {

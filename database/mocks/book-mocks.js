@@ -18,7 +18,9 @@ let data = [
   { owner_id: 2, author_id: 5, title: 'Brave New World' },
   { owner_id: 2, author_id: 6, title: 'Cather in the Rye' },
   { owner_id: 2, author_id: 7, title: 'The Trial' },
-  { owner_id: 2, author_id: 7, title: 'The Metamorphasis' }
+  { owner_id: 2, author_id: 7, title: 'The Metamorphasis' },
+
+  { owner_id: 4, author_id: 8, title: 'Mother Night' }
 ]
 
 module.exports = {
