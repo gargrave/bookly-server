@@ -1,7 +1,9 @@
 const knex = require('../../../database/db')
 const DB = require('../../../globals/constants').db
+
 const utils = require('../../utils/utils')
-const helpers = require('../email-helpers')
+
+const emailHelpers = require('../email-helpers')
 
 async function findExistingToken (where) {
   let val
@@ -42,8 +44,8 @@ module.exports = {
 
     // send the email!
     const template = require('../templates/verify')
-    mg.messages().send(helpers.buildEmail(config, template), (err, body) => {
-      helpers.showResults('verify', err, body)
+    mg.messages().send(emailHelpers.buildEmail(config, template), (err, body) => {
+      emailHelpers.showResults('verify', err, body)
     })
   },
 
@@ -55,6 +57,6 @@ module.exports = {
     config.token = tokenRecord.token
 
     const template = require('../templates/verify')
-    console.log(template.html(config))
+    emailHelpers.dumpToConsole(emailHelpers.buildEmail(config, template))
   }
 }

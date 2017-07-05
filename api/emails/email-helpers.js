@@ -1,4 +1,5 @@
 const env = require('../../globals/env')
+const log = require('../../globals/logger').verboseLog
 
 const from = 'Bookly Admin <no-reply@bookly-app.us>'
 
@@ -24,5 +25,17 @@ module.exports = {
         console.log(body)
       }
     }
+  },
+
+  dumpToConsole (mail) {
+    console.log('\nThe following email has been dumped to console for dev environment:\n')
+    log([
+      `From: ${mail.from}`,
+      `To: ${mail.to}`,
+      `Subject: ${mail.subject}`,
+      '',
+      '(Message HTML content is below)'
+    ])
+    console.log(mail.html)
   }
 }
