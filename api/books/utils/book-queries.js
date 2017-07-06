@@ -103,7 +103,7 @@ module.exports = {
    * For single selection, the 'recordId' param must be provided.
    * For multiple selection, the 'limit' param must be provided, as it defaults to 1.
    */
-  async selectOneBookAndPopulateAuthor ({ ownerId, selectCols, recordId, limit = 1 }) {
+  async selectOneBookAndPopulateAuthor ({ ownerId, recordId, selectCols }) {
     let res = Boom.badRequest(apiErr.notFound(resourceName, recordId))
 
     // build the WHERE clause, with optional record id (i.e. for single selection)
@@ -119,7 +119,7 @@ module.exports = {
         .select(selectCols)
         .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
         .where(where)
-        .limit(limit)
+        .limit(1)
 
       if (bookRecords.length) {
         res = bookHelpers.populateAuthor(bookRecords[0])
@@ -131,15 +131,12 @@ module.exports = {
     return res
   },
 
-  async selectAllBooksAndPopulateAuthor ({ ownerId, selectCols, recordId }) {
-    let res = Boom.badRequest(apiErr.notFound(resourceName, recordId))
+  async selectAllBooksAndPopulateAuthor ({ ownerId, selectCols }) {
+    let res = Boom.badRequest(apiErr.failedToList('Book'))
 
     // build the WHERE clause, with optional record id (i.e. for single selection)
     const where = {
       [`${DB.BOOKS}.owner_id`]: ownerId
-    }
-    if (recordId) {
-      where[`${DB.BOOKS}.id`] = recordId
     }
 
     try {

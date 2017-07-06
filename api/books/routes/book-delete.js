@@ -28,7 +28,7 @@ class BookDeleteRoute extends ApiDeleteRoute {
       selectCols: this.getSelectParams()
     }
 
-    return bookQueries.selectBookAndPopulateAuthor(params)
+    return bookQueries.selectOneBookAndPopulateAuthor(params)
   }
 }
 
