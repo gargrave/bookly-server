@@ -11,6 +11,8 @@ const log = require('../globals/logger').verboseLog
 log('Setting up test environment...')
 
 global.server = server
+global.after = lab.after
+global.afterEach = lab.afterEach
 global.before = lab.before
 global.beforeEach = lab.beforeEach
 global.describe = lab.describe
