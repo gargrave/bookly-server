@@ -1,3 +1,5 @@
+'use strict'
+
 const apiHelper = require('../../../api/utils/api-helper')
 const authorMocks = require('../../../database/mocks/author-mocks')
 const userMocks = require('../../../database/mocks/user-mocks')

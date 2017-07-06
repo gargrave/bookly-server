@@ -1,3 +1,5 @@
+'use strict'
+
 const apiErrors = require('../../../api/utils/api-errors')
 const apiHelper = require('../../../api/utils/api-helper')
 

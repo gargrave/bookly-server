@@ -1,3 +1,5 @@
+'use strict'
+
 const axios = require('axios')
 
 const apiHelper = require('../api/utils/api-helper')

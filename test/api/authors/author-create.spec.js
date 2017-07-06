@@ -1,3 +1,5 @@
+'use strict'
+
 const apiHelper = require('../../../api/utils/api-helper')
 
 const testHelpers = require('../../test-helpers')

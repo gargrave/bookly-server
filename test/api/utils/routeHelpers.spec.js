@@ -1,3 +1,5 @@
+'use strict'
+
 const helpers = require('../../../api/utils/route-helpers')
 
 function buildRequest (ownerIdValue) {
