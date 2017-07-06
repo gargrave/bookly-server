@@ -11,14 +11,16 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
   let user
   let response
 
+  afterEach(async () => {
+    user = null
+    response = null
+  })
+
   describe('Not Authenticated ->', () => {
-    beforeEach((done) => {
+    beforeEach(async () => {
       let request = apiHelper.axGet(authorsUrl)
-      // send the HTTP request
-      testHttp(request).then(res => {
-        response = res.data
-        done()
-      })
+      let res = await testHttp(request)
+      response = res.data
     })
 
     it('should return a 401 error if no token is provided', (done) => {
@@ -35,17 +37,12 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
   })
 
   describe('Authenticated, user has records ->', () => {
-    beforeEach((done) => {
-      user = null
-      login().then(userData => {
-        user = userData
-        let request = apiHelper.axGet(authorsUrl, user.token)
-        // send the HTTP request
-        testHttp(request).then(res => {
-          response = res.data
-          done()
-        })
-      })
+    beforeEach(async () => {
+      user = await login()
+
+      const request = apiHelper.axGet(authorsUrl, user.token)
+      const res = await testHttp(request)
+      response = res.data
     })
 
     it('should provide an Array of Authors if proper authentication is provided', (done) => {
@@ -67,18 +64,13 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
   })
 
   describe('Authenticated, user has one record ->', () => {
-    beforeEach((done) => {
-      user = null
+    beforeEach(async () => {
       const loginUser = userMocks.userWithOneRecord
-      login(loginUser).then(userData => {
-        user = userData
-        let request = apiHelper.axGet(authorsUrl, user.token)
-        // send the HTTP request
-        testHttp(request).then(res => {
-          response = res.data
-          done()
-        })
-      })
+      user = await login(loginUser)
+
+      const request = apiHelper.axGet(authorsUrl, user.token)
+      const res = await testHttp(request)
+      response = res.data
     })
 
     it('should return an Array with a single element', (done) => {
@@ -89,18 +81,13 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
   })
 
   describe('Authenticated, user has no records ->', () => {
-    beforeEach((done) => {
-      user = null
+    beforeEach(async () => {
       const loginUser = userMocks.userWithNoData
-      login(loginUser).then(userData => {
-        user = userData
-        let request = apiHelper.axGet(authorsUrl, user.token)
-        // send the HTTP request
-        testHttp(request).then(res => {
-          response = res.data
-          done()
-        })
-      })
+      user = await login(loginUser)
+
+      const request = apiHelper.axGet(authorsUrl, user.token)
+      const res = await testHttp(request)
+      response = res.data
     })
 
     it('should return an empty Array if the User has no authors', (done) => {
