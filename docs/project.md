@@ -19,53 +19,69 @@ Environment variables for Node. Needs to include the following:
 
 - `CORS_WHITELIST` - A comma-separated string of fully-qualified URLs that should be allowed through CORS restrictions. This can be ommitted if preferred, in which case CORS will remain disabled for all routes.
 - `JWT_DEFAULT_DURATION` - The default time after which a JWT will expire. Should be expressed in seconds (i.e. a value of `60 * 60` will give you a JWT that expires 1 hour after being issued). If you do not specify anything here, the default value of 1 hour will be used.
+- `DUMP_DEV_EMAILS_TO_CONSOLE` - When set to true, any emails that would normally be sent will instead simply be dumped to the console. For 'dev' env. only.
+- `SHOW_FULL_ERRORS_IN_DEV` - When set to true, error messages will be dumped in full to the console in 'dev' env. Set this false to avoid dumping errors, as they can sometimes get pretty verbose.
 
-A sample file might look like this. You don't really have to create an object and loop through it like this. I just find it a little cleaner to not have `process.env` written out for every var.
+#### Mailgun config (required if you want to send emails)
+
+If you wish to send real emails, you will need to define these:
+
+- `CLIENT_BASE_URL` - The base URL for your app. This is used to generate URLs for your emails like the "password reset" link, since they need to know where to redirect.
+- `MAILGUN_API_URL` - The base URL for your Mailgun account
+- `MAILGUN_API_KEY` - The API key for your Mailgun account
+
+A sample file might look like this:
 
 ```js
+// etc/envVars.js
 const jwtDuration = 60 * 60
 
-const envVars = {
+const dbUser = 'db_user'
+const dbPassword = 'db_password'
+const dbPath = 'localhost/db_name'
+
+const vars = {
   // required
   AUTH_SECRET_KEY: 'ineedabettersecretkey',
-  DATABASE_URL: 'postgres://db_user:db_password@postgres/db_name',
+  DATABASE_URL: `postgres://${dbUser}:${dbPassword}@${dbPath}`,
+
+  // mailgun config
+  CLIENT_BASE_URL: 'https://mygreatwebsite.net/#',
+  MAILGUN_API_URL: '<mg-api-url>.mailgun.org',
+  MAILGUN_API_KEY: 'key-<whatever-your-api-key-might-be>',
 
   // optional
   CORS_WHITELIST: 'http://localhost:8080,https://mygreatwebsite.net',
   JWT_DEFAULT_DURATION: jwtDuration,
-
-  // mailgun config
-  MAILGUN_API_URL: '<mg-api-url>.mailgun.org',
-  MAILGUN_API_KEY: 'key-<whatever-your-api-key-might-be>'
+  DUMP_DEV_EMAILS_TO_CONSOLE: true,
+  SHOW_FULL_ERRORS_IN_DEV: true
 }
 
-for (let v in envVars) {
-  process.env[v] = envVars[v]
+for (let v in vars) {
+  process.env[v] = vars[v]
 }
+
+module.exports = vars
 ```
 
 ---
 
-### docker-compose.secrets.yml
+### envVars-test.js
 
-An extension docker-compose file to pass in "secret" values. This will be appended after the main compose file and the environment-specific one have been loaded.
+Just a simple override file for 'test' env (note that this one exports its vars). Basically just define the path to the test DB so that the tests do not use your dev or prod DB.
 
-What it currently needs:
+```js
+const dbUser = 'bookly_test_user'
+const dbPassword = 'testuserpassword'
+const dbPath = 'localhost/bookly_test_db'
 
-- postgres -> environment:
-  - `POSTGRES_USER`, `POSTGRES_DB`, and `POSTGRES_PASSWORD`
-    - Technically, you don't _really_ need these if you do not wish to have the extra security, but they are strongly recommended.
-    - The values can be whatever you want--the PG Docker image will use them to build the database and/or user when you first build the container.
-    - Note that the value of `process.env.DATABASE_URL` in `envVars.js` needs to correspond to these, and I do not have any clever mechanism for automatically injecting them there, so be sure you update that file with these values. So, for example, assuming the configuration below, the full database URL would be: `postgres://my_pg_username:my_pg_password@postgres/super_secure_password`
+const vars = {
+  DATABASE_URL: `postgres://${dbUser}:${dbPassword}@${dbPath}`
+}
 
-A sample file might look like this:
+for (let v in vars) {
+  process.env[v] = vars[v]
+}
 
-```yaml
-version: '2'
-services:
-  postgres:
-    environment:
-      POSTGRES_USER: my_pg_username
-      POSTGRES_DB: my_pg_password
-      POSTGRES_PASSWORD: super_secure_password
+module.exports = vars
 ```
