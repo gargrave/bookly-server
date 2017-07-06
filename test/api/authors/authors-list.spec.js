@@ -36,7 +36,7 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
     })
   })
 
-  describe('Authenticated, user has records ->', () => {
+  describe('Authenticated, user has records, no pagination ->', () => {
     beforeEach(async () => {
       user = await login()
 
@@ -46,9 +46,35 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
     })
 
     it('should provide an Array of Authors if proper authentication is provided', async () => {
-      const authors = response
+      const authors = response.results
       const author = authors[0]
       const expectedLength = authorMocks.get().filter(a => a.owner_id === user.id).length
+
+      expect(authors).to.be.an.array()
+      expect(authors.length).to.equal(expectedLength)
+
+      expect(author.id).to.not.be.undefined()
+      expect(author.first_name).to.not.be.undefined()
+      expect(author.last_name).to.not.be.undefined()
+      expect(author.created_at).to.not.be.undefined()
+      expect(author.updated_at).to.not.be.undefined()
+    })
+  })
+
+  describe('Authenticated, user has records, with pagination ->', () => {
+    beforeEach(async () => {
+      user = await login()
+
+      const url = `${testUrl}?limit=2`
+      const request = apiHelper.axGet(url, user.token)
+      const res = await testHttp(request)
+      response = res.data
+    })
+
+    it('should provide an Array of 2 Authors when pagination options are provided', async () => {
+      const authors = response.results
+      const author = authors[0]
+      const expectedLength = 2
 
       expect(authors).to.be.an.array()
       expect(authors.length).to.equal(expectedLength)
@@ -72,8 +98,10 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
     })
 
     it('should return an Array with a single element', async () => {
-      expect(response).to.be.an.array()
-      expect(response.length).to.equal(1)
+      const authors = response.results
+
+      expect(authors).to.be.an.array()
+      expect(authors.length).to.equal(1)
     })
   })
 
@@ -88,8 +116,10 @@ describe('API ROUTE: /authors/ (GET: list) -> ', () => {
     })
 
     it('should return an empty Array if the User has no authors', async () => {
-      expect(response).to.be.an.array()
-      expect(response.length).to.equal(0)
+      const authors = response.results
+
+      expect(authors).to.be.an.array()
+      expect(authors.length).to.equal(0)
     })
   })
 })
