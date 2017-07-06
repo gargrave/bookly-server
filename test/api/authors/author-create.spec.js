@@ -1,6 +1,6 @@
 const apiHelper = require('../../../api/utils/api-helper')
 
-const testHelpers = require('../../test-helper')
+const testHelpers = require('../../test-helpers')
 const { login, testHttp } = testHelpers
 
 const testUrl = 'http://localhost:3001/api/v1/authors'

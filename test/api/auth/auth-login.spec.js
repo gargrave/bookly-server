@@ -1,8 +1,8 @@
 const apiErrors = require('../../../api/utils/api-errors')
 const apiHelper = require('../../../api/utils/api-helper')
 
-const testHelper = require('../../test-helper')
-const { testHttp } = testHelper
+const testHelpers = require('../../test-helpers')
+const { testHttp } = testHelpers
 
 const testUrl = 'http://localhost:3001/api/v1/auth/login'
 

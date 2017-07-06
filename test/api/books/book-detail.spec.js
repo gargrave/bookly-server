@@ -1,8 +1,8 @@
 const apiHelper = require('../../../api/utils/api-helper')
 const bookMocks = require('../../../database/mocks/book-mocks')
 
-const testHelper = require('../../test-helper')
-const { login, testHttp } = testHelper
+const testHelpers = require('../../test-helpers')
+const { login, testHttp } = testHelpers
 
 const testUrl = 'http://localhost:3001/api/v1/books'
 
