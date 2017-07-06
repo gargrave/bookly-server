@@ -26,5 +26,7 @@ module.exports = {
     } catch (err) {
       return { data: utils.parseError(err) }
     }
-  }
+  },
+
+  invalidToken: 'eyJhUzI1NibGnR5ciOiJIIsIcCI6IkpXVCJ9.eyW1JpZCiwiZWhc2RhamQGwiOiJVtYWlsLI6MmNvbSIsImlhdCI6MTQ5OTM2ODUk5M1MiwiZXhwIjoxNDzcyMTUyfQ.SbI8KzO-kNKGI8cwASk55OFFsrUGNXjVJcKJt2rLwfY'
 }

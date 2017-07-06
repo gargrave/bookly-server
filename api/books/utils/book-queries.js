@@ -25,22 +25,22 @@ module.exports = {
     let res = Boom.badRequest(apiErr.failedToCreate(resourceName))
 
     try {
-      const bookRecord = await knex(DB.BOOKS)
-        .insert(payload)
-        .returning(returning)
+      const authorSelectResult = await this.selectAuthorForBook(
+        payload.owner_id, payload.author_id)
 
-      if (bookRecord.length) {
-        const book = bookRecord[0]
-        // HACK: This is a hack to rebuild the response with full author data,
-        // as I could not initially figure out how to get Knex to do a
-        // JOIN and RETURNING clause at the same time
-        const authorRecord = await this.selectAuthorForBook(payload.owner_id, book.author_id)
-        if (authorRecord.length) {
+      if (authorSelectResult.length) {
+        const bookRecord = await knex(DB.BOOKS)
+          .insert(payload)
+          .returning(returning)
+
+        if (bookRecord.length) {
           res = bookHelpers.populateAuthor(Object.assign({},
-            book,
-            authorRecord[0])
+            bookRecord[0],
+            authorSelectResult[0])
           )
         }
+      } else {
+        throw authorSelectResult
       }
     } catch (err) {
       env.error(err, 'bookQueries.createBook()')
@@ -49,6 +49,11 @@ module.exports = {
       // check if this is 'unique constaint' error
       if (msg.indexOf('violates unique constraint') !== -1) {
         res = Boom.badRequest(apiErr.matchingRecord(resourceName))
+      }
+      // check if this is 'foreign key' error
+      if (msg.indexOf('violates foreign key constraint') !== -1 ||
+        msg.indexOf('No Author with id') !== -1) {
+        res = Boom.badRequest(apiErr.invalidForeignKey('Author', payload.author_id))
       }
     }
 
@@ -171,7 +176,7 @@ module.exports = {
    * @param {*} authorId - The ID of the Author record to SELECT
    */
   async selectAuthorForBook (ownerId, authorId) {
-    let res = Boom.badRequest(apiErr.notFound('Author'))
+    let res = Boom.badRequest(apiErr.notFound('Author', authorId))
 
     const select = ['id as author_id', 'first_name', 'last_name']
     const where = {

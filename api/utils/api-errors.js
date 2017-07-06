@@ -34,7 +34,13 @@ module.exports = {
     return 'Could not log in with the provided credentials.'
   },
 
+  // another user is already registered with this email
   userExists () {
     return 'Email is already in use by another user.'
+  },
+
+  // invalid foreign key
+  invalidForeignKey (modelName, id) {
+    return `No matching ${modelName} found for foreign key: ${id}.`
   }
 }
