@@ -4,54 +4,47 @@ const bookMocks = require('../../../database/mocks/book-mocks')
 const testHelper = require('../../test-helper')
 const { login, testHttp } = testHelper
 
-const bookDetailUrl = 'http://localhost:3001/api/v1/books'
+const testUrl = 'http://localhost:3001/api/v1/books'
 
 describe('API ROUTE: /books/ (GET: list) -> ', () => {
   let user
   let response
 
+  afterEach(async () => {
+    user = null
+    response = null
+  })
+
   describe('Not Authenticated ->', () => {
-    beforeEach((done) => {
-      let request = apiHelper.axGet(bookDetailUrl)
-      // send the HTTP request
-      testHttp(request).then(res => {
-        response = res.data
-        done()
-      })
+    beforeEach(async () => {
+      const request = apiHelper.axGet(testUrl)
+      const res = await testHttp(request)
+      response = res.data
     })
 
-    it('should return a 401 error if no token is provided', (done) => {
+    it('should return a 401 error if no token is provided', async () => {
       expect(response.statusCode).to.equal(401)
       expect(response.message).to.not.be.undefined()
-      done()
     })
 
-    it('should return a 401 error if an invalid token is provided', (done) => {
+    it('should return a 401 error if an invalid token is provided', async () => {
       expect(response.statusCode).to.equal(401)
       expect(response.message).to.not.be.undefined()
-      done()
     })
   })
 
   describe('Authenticated, request owned Book ->', () => {
-    beforeEach((done) => {
-      user = null
+    beforeEach(async () => {
+      user = await login()
 
-      login().then(userData => {
-        user = userData
-        const ownedId = bookMocks.getOwnedRecordId(user.id)
-        const url = `${bookDetailUrl}/${ownedId}`
-        let request = apiHelper.axGet(url, user.token)
-
-        // send the HTTP request
-        testHttp(request).then(res => {
-          response = res.data
-          done()
-        })
-      })
+      const ownedId = bookMocks.getOwnedRecordId(user.id)
+      const url = `${testUrl}/${ownedId}`
+      const request = apiHelper.axGet(url, user.token)
+      const res = await testHttp(request)
+      response = res.data
     })
 
-    it('should return a valid Book if the ID is owned by this User', (done) => {
+    it('should return a valid Book if the ID is owned by this User', async () => {
       expect(response).to.be.an.object()
       expect(response.id).to.not.be.undefined()
       expect(response.title).to.not.be.undefined()
@@ -60,59 +53,42 @@ describe('API ROUTE: /books/ (GET: list) -> ', () => {
       expect(response.author.name).to.not.be.undefined()
       expect(response.created_at).to.not.be.undefined()
       expect(response.updated_at).to.not.be.undefined()
-      done()
     })
   })
 
   describe('Authenticated, request unowned Book ->', () => {
-    beforeEach((done) => {
-      user = null
+    beforeEach(async () => {
+      user = await login()
 
-      login().then(userData => {
-        user = userData
-        const unownedId = bookMocks.getUnownedRecordId(user.id)
-        const url = `${bookDetailUrl}/${unownedId}`
-        let request = apiHelper.axGet(url, user.token)
-
-        // send the HTTP request
-        testHttp(request).then(res => {
-          response = res.data
-          done()
-        })
-      })
+      const unownedId = bookMocks.getUnownedRecordId(user.id)
+      const url = `${testUrl}/${unownedId}`
+      const request = apiHelper.axGet(url, user.token)
+      const res = await testHttp(request)
+      response = res.data
     })
 
-    it('should return an error if the ID is not owned by this User', (done) => {
+    it('should return an error if the ID is not owned by this User', async () => {
       expect(response.statusCode).to.equal(400)
       expect(response.message).to.not.be.undefined()
       expect(response.message.indexOf('No Book with id')).to.not.equal(-1)
-      done()
     })
   })
 
   describe('Authenticated, request with invalid ID ->', () => {
-    beforeEach((done) => {
-      user = null
+    beforeEach(async () => {
+      user = await login()
 
-      login().then(userData => {
-        user = userData
-        const invalidId = 97531
-        const url = `${bookDetailUrl}/${invalidId}`
-        let request = apiHelper.axGet(url, user.token)
-
-        // send the HTTP request
-        testHttp(request).then(res => {
-          response = res.data
-          done()
-        })
-      })
+      const invalidId = 97531
+      const url = `${testUrl}/${invalidId}`
+      const request = apiHelper.axGet(url, user.token)
+      const res = await testHttp(request)
+      response = res.data
     })
 
-    it('should return an error if the ID is not valid', (done) => {
+    it('should return an error if the ID is not valid', async () => {
       expect(response.statusCode).to.equal(400)
       expect(response.message).to.not.be.undefined()
       expect(response.message.indexOf('No Book with id')).to.not.equal(-1)
-      done()
     })
   })
 })
