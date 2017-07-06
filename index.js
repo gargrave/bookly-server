@@ -14,6 +14,13 @@ function validate (decoded, request, callback) {
 
 server.connection(config.server)
 
+// plugin: pagination
+server.register(require('hapi-pagination'), (err) => {
+  if (err) {
+    throw err
+  }
+})
+
 server.register(require('hapi-auth-jwt2'), (err) => {
   if (err) {
     console.log('Error loading hapi-auth-jwt2: ' + err)
@@ -33,8 +40,12 @@ server.register(require('hapi-auth-jwt2'), (err) => {
   routes.forEach(r => server.route(require(r)))
 })
 
+// exclude plugins that have no use in 'test' env
 if (process.env.NODE_ENV !== 'test') {
-  server.register({ register: Blipp, options: {} }, (err) => {
+  server.register({
+    register: Blipp,
+    options: {}
+  }, (err) => {
     if (err) {
       console.log('Error loading Blipp: ' + err)
     }

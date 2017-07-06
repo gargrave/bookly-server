@@ -8,6 +8,34 @@ const env = require('../../../globals/env')
 const apiErr = require('../../utils/api-errors')
 
 module.exports = {
+  /**
+   * Performs a COUNT operation for the supplied owner ID on the specified table.
+   *
+   * 'params' must be an object that includes the following:
+   *    - ownerId - The owner ID for the user to query
+   *    - table - The name of the table to query
+   */
+  async countRows (params) {
+    let res = Boom.badRequest()
+
+    const { ownerId, table } = params
+    const where = { owner_id: ownerId }
+
+    try {
+      const countResult = await knex(table)
+        .count('*')
+        .where(where)
+
+      if (countResult.length) {
+        return Number(countResult[0].count)
+      }
+    } catch (err) {
+      env.error(err, 'genericQueries.countRows()')
+    }
+
+    return res
+  },
+
   async selectOne ({ ownerId, recordId, selectCols, dbName, resourceName = 'Record' }) {
     let res = Boom.badRequest(apiErr.notFound(resourceName, recordId))
 
@@ -29,15 +57,29 @@ module.exports = {
     return res
   },
 
-  async selectAll ({ ownerId, selectCols, dbName }) {
+  /**
+   * Performs a SELECT operation for the supplied owner ID on the specified table.
+   * Pagination can be specified with the 'limit' and 'offset' properties.
+   *
+   * 'params' must be an object that includes the following:
+   *    - ownerId {Number} - The owner ID for the user to query
+   *    - table {String} - The name of the table to query
+   *    - select {String[]} - A list of column names to SELECT
+   *    - limit {Number} - The number of results to LIMIT to (defaults to 25)
+   *    - offset {Number} - The offset to use in conjunction with LIMIT
+   */
+  async selectMany (params) {
     let res = Boom.badRequest()
 
+    const { ownerId, table, select, limit, offset } = params
     const where = { owner_id: ownerId }
 
     try {
-      const records = await knex(dbName)
-        .select(selectCols)
+      const records = await knex(table)
+        .select(select)
         .where(where)
+        .limit(limit || 25)
+        .offset(offset || 0)
 
       res = records
     } catch (err) {

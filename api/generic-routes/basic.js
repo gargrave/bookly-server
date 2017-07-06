@@ -4,7 +4,7 @@ const Boom = require('boom')
 
 class ApiRoute {
   constructor (params) {
-    const { method, path, auth, db, resourceName } = params
+    const { method, path, auth, db, resourceName, pagination } = params
 
     this.db = db || ''
     this.resourceName = resourceName || ''
@@ -22,7 +22,12 @@ class ApiRoute {
         origin: process.env.CORS_WHITELIST.split(',')
       },
       pre: this.getPrerequisites(),
-      validate: this.getValidators()
+      validate: this.getValidators(),
+      plugins: {
+        pagination: pagination || {
+          enabled: false
+        }
+      }
     }
   }
 
