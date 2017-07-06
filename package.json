@@ -33,6 +33,7 @@
     "forever": "^0.15.3",
     "hapi": "^16.3.0",
     "hapi-auth-jwt2": "^7.2.4",
+    "hapi-pagination": "^1.20.0",
     "joi": "^10.5.2",
     "jsonwebtoken": "^7.4.1",
     "knex": "^0.13.0",
