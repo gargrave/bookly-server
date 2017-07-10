@@ -136,19 +136,20 @@ module.exports = {
     return res
   },
 
-  async selectAllBooksAndPopulateAuthor ({ ownerId, selectCols }) {
+  async selectManyBooksAndPopulateAuthor (params) {
     let res = Boom.badRequest(apiErr.failedToList('Book'))
 
+    const { ownerId, select, limit, offset } = params
     // build the WHERE clause, with optional record id (i.e. for single selection)
-    const where = {
-      [`${DB.BOOKS}.owner_id`]: ownerId
-    }
+    const where = { [`${DB.BOOKS}.owner_id`]: ownerId }
 
     try {
       const bookRecords = await knex(DB.BOOKS)
-        .select(selectCols)
+        .select(select)
         .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
         .where(where)
+        .limit(limit || 25)
+        .offset(offset || 0)
 
       if (bookRecords.length) {
         if (bookRecords.length === 1) {
