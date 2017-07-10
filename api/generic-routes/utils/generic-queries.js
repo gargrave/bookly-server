@@ -78,7 +78,7 @@ module.exports = {
       const records = await knex(table)
         .select(select)
         .where(where)
-        .limit(limit || 25)
+        .limit(limit || 50)
         .offset(offset || 0)
 
       res = records

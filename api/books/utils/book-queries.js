@@ -148,7 +148,7 @@ module.exports = {
         .select(select)
         .innerJoin(DB.AUTHORS, `${DB.BOOKS}.author_id`, `${DB.AUTHORS}.id`)
         .where(where)
-        .limit(limit || 25)
+        .limit(limit || 50)
         .offset(offset || 0)
 
       if (bookRecords.length) {
