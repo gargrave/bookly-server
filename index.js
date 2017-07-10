@@ -15,7 +15,15 @@ function validate (decoded, request, callback) {
 server.connection(config.server)
 
 // plugin: pagination
-server.register(require('hapi-pagination'), (err) => {
+const paginationOptions = {
+  meta: {
+    baseUri: process.env.HOST_BASE_URL || ''
+  }
+}
+server.register({
+  register: require('hapi-pagination'),
+  options: paginationOptions
+}, (err) => {
   if (err) {
     throw err
   }
