@@ -3,7 +3,5 @@
   "eslint.enable": true,
   "files.exclude": {
     "dist": true
-  },
-  "standard.enable": true,
-  "standard.autoFixOnSave": true
+  }
 }
