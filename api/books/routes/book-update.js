@@ -2,6 +2,8 @@
 
 const ApiUpdateRoute = require('../../generic-routes/update')
 
+const knex = require('../../../database/db')
+
 const globalHelpers = require('../../utils/route-helpers')
 
 const bookHelpers = require('../utils/book-helpers')
@@ -22,7 +24,10 @@ class BookUpdateRoute extends ApiUpdateRoute {
   }
 
   buildPayload (payload) {
-    return Promise.resolve(bookHelpers.buildPayload(payload))
+    return Promise.resolve(Object.assign({},
+      bookHelpers.buildPayload(payload),
+      { updated_at: knex.raw('NOW()') }
+    ))
   }
 
   /**
